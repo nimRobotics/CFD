@@ -149,7 +149,7 @@
     \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
     % Document parameters
     % Document title
-    \title{Assignment 1 ME5102}
+       \title{Assignment 1 ME5102}
 
 \author{Aakash \\ Email: \href{mailto:me16b001@iittp.ac.in}{me16b001@iittp.ac.in}}
     
@@ -304,33 +304,43 @@ with the below equation taking x=6 as the initial guess
 \[x_{i+1} = x_{i} - \frac{f_{i}}{f^{'}_{i}} \]
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}6}]:} \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np} 
-        \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
-        \PY{k+kn}{from} \PY{n+nn}{astropy}\PY{n+nn}{.}\PY{n+nn}{table} \PY{k}{import} \PY{n}{Table}\PY{p}{,} \PY{n}{Column}
-        \PY{k+kn}{import} \PY{n+nn}{math} 
-        
-        \PY{n}{x}\PY{o}{=}\PY{l+m+mi}{6}
-        \PY{n}{y}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{o}{\PYZhy{}}\PY{n}{x}
-        \PY{n}{lx} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-        \PY{n}{ly} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-        \PY{k}{while} \PY{n}{y} \PY{o}{\PYZgt{}} \PY{l+m+mf}{0.00001}\PY{p}{:}
-        	\PY{n}{y}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{o}{\PYZhy{}}\PY{n}{x}
-        	\PY{n}{dy}\PY{o}{=}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{+}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{/}\PY{n}{x}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{x}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}
-        	\PY{n}{xn} \PY{o}{=} \PY{n}{x} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{n}{y}\PY{o}{/}\PY{n}{dy}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} 	print(\PYZdq{}x = \PYZdq{},x)}
-        	\PY{n}{lx}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{x}\PY{p}{)}
-        	\PY{n}{x} \PY{o}{=} \PY{n}{xn}
-        \PY{c+c1}{\PYZsh{} 	print(\PYZdq{}y = \PYZdq{},y)}
-        	\PY{n}{ly}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{y}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x = }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{x}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} potting the points}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{lx}\PY{p}{,} \PY{n}{ly}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} function to show the plot}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-        \PY{n}{t} \PY{o}{=} \PY{n}{Table}\PY{p}{(}\PY{p}{[}\PY{n}{lx}\PY{p}{,} \PY{n}{ly}\PY{p}{]}\PY{p}{,} \PY{n}{names}\PY{o}{=}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{X}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{n}{t}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}19}]:} \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np} 
+         \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+         \PY{k+kn}{from} \PY{n+nn}{astropy}\PY{n+nn}{.}\PY{n+nn}{table} \PY{k}{import} \PY{n}{Table}\PY{p}{,} \PY{n}{Column}
+         \PY{k+kn}{import} \PY{n+nn}{math} 
+         
+         \PY{n}{x}\PY{o}{=}\PY{l+m+mi}{6}
+         \PY{n}{y}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{o}{\PYZhy{}}\PY{n}{x}
+         \PY{n}{lx} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+         \PY{n}{ly} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+         \PY{n}{error} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+         \PY{n}{exact} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+         \PY{n}{i} \PY{o}{=} \PY{l+m+mi}{0}
+         \PY{n}{itera} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+         \PY{k}{while} \PY{n}{y} \PY{o}{\PYZgt{}} \PY{l+m+mf}{0.00001}\PY{p}{:}
+         	\PY{n}{y}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{o}{\PYZhy{}}\PY{n}{x}
+         	\PY{n}{dy}\PY{o}{=}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{+}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{/}\PY{n}{x}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{l+m+mf}{0.3}\PY{o}{*}\PY{n}{x}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}
+         	\PY{n}{xn} \PY{o}{=} \PY{n}{x} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{n}{y}\PY{o}{/}\PY{n}{dy}\PY{p}{)}
+         	\PY{n}{lx}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+         	\PY{n}{x} \PY{o}{=} \PY{n}{xn}
+         	\PY{n}{ly}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{y}\PY{p}{)}
+         	\PY{n}{i} \PY{o}{=} \PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x = }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{x}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} exact solution 4.89389362525}
+         \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{i}\PY{p}{)}\PY{p}{:}
+         	\PY{n}{exact}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+m+mf}{4.89389362525}\PY{p}{)}
+         	\PY{n}{itera}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+             
+         \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{i}\PY{p}{)}\PY{p}{:}
+         	\PY{n}{error}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{lx}\PY{p}{[}\PY{n}{x}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{exact}\PY{p}{[}\PY{n}{x}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{} potting the points}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{itera}\PY{p}{,} \PY{n}{error}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Absolute error}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Iteration number}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+         \PY{n}{t} \PY{o}{=} \PY{n}{Table}\PY{p}{(}\PY{p}{[}\PY{n}{itera}\PY{p}{,} \PY{n}{error}\PY{p}{]}\PY{p}{,} \PY{n}{names}\PY{o}{=}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Iteration number}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Absolute error}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{t}\PY{p}{)}
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\}]
@@ -342,24 +352,24 @@ x =  4.89389362525
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_1_1.png}
     \end{center}
     { \hspace*{\fill} \\}
-    
+    \vspace{30px}
     \begin{Verbatim}[commandchars=\\\{\}]
-      X               Y        
-------------- -----------------
-          6.0     2.83951312985
-5.12901803852    0.487320542025
-4.90681947262   0.0253545117731
-4.89393498811 8.08754746275e-05
-4.89389362568 8.30999269397e-10
+
+Iteration number   Absolute error 
+---------------- -----------------
+               0     1.10610637475
+               1     0.23512441327
+               2   0.0129258473651
+               3 4.13628589619e-05
+               4 4.28117985507e-10
 
     \end{Verbatim}
 
     \section*{Problem 5: Trapezoidal
 Method}\label{problem-5-trapezoidal-method}
-%\vspace*{150px}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}9}]:} \PY{k+kn}{from} \PY{n+nn}{astropy}\PY{n+nn}{.}\PY{n+nn}{table} \PY{k}{import} \PY{n}{Table}\PY{p}{,} \PY{n}{Column}
+{\color{incolor}In [{\color{incolor}3}]:} \PY{k+kn}{from} \PY{n+nn}{astropy}\PY{n+nn}{.}\PY{n+nn}{table} \PY{k}{import} \PY{n}{Table}\PY{p}{,} \PY{n}{Column}
         \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np} 
         
@@ -379,7 +389,7 @@ Method}\label{problem-5-trapezoidal-method}
         	\PY{k}{return}\PY{p}{(}\PY{n}{A}\PY{p}{)}
         
         \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{11}\PY{p}{)}\PY{p}{:}
-        	\PY{n}{ival}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{calculate}\PY{p}{(}\PY{l+m+mi}{10}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{p}{)}
+        	\PY{n}{ival}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{calculate}\PY{p}{(}\PY{l+m+mi}{30}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{p}{)}
         
         
         \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{11}\PY{p}{)}\PY{p}{:}
@@ -404,20 +414,20 @@ Method}\label{problem-5-trapezoidal-method}
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\}]
- No        h        IntegralApprox  IntegralExact       Error      
---- --------------- -------------- -------------- -----------------
-  1             0.2  1.10661589574  1.10714871779 0.000532822057604
-  2             0.1  1.10701541645  1.10714871779  0.00013330134478
-  3 0.0666666666667  1.10708946485  1.10714871779 5.92529394907e-05
-  4            0.05  1.10711538646  1.10714871779 3.33313337444e-05
-  5            0.04  1.10712738528  1.10714871779 2.13325144161e-05
-  6 0.0333333333333  1.10713390337  1.10714871779 1.48144200054e-05
-  7 0.0285714285714  1.10713783365  1.10714871779   1.088414074e-05
-  8           0.025  1.10714038459  1.10714871779 8.33320857274e-06
-  9 0.0222222222222  1.10714213351  1.10714871779  6.5842843413e-06
- 10            0.02  1.10714338451  1.10714871779 5.33328237085e-06
+ No        h         IntegralApprox  IntegralExact       Error      
+--- ---------------- -------------- -------------- -----------------
+  1  0.0666666666667  1.10708946485  1.10714871779 5.92529394907e-05
+  2  0.0333333333333  1.10713390337  1.10714871779 1.48144200054e-05
+  3  0.0222222222222  1.10714213351  1.10714871779  6.5842843413e-06
+  4  0.0166666666667  1.10714501412  1.10714871779 3.70367924885e-06
+  5  0.0133333333333  1.10714634743  1.10714871779 2.37036049411e-06
+  6  0.0111111111111  1.10714707171  1.10714871779 1.64608589537e-06
+  7 0.00952380952381  1.10714750842  1.10714871779 1.20937024217e-06
+  8 0.00833333333333  1.10714779187  1.10714871779 9.25924618533e-07
+  9 0.00740740740741   1.1071479862  1.10714871779 7.31595066972e-07
+ 10 0.00666666666667   1.1071481252  1.10714871779 5.92592197535e-07
 
- Slope of the log-log curve is:  1.99965836495
+ Slope of the log-log curve is:  1.99996185283
 
     \end{Verbatim}
 
@@ -426,10 +436,6 @@ Method}\label{problem-5-trapezoidal-method}
     \end{center}
     { \hspace*{\fill} \\}
     
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor} }]:} 
-\end{Verbatim}
-
 
     % Add a bibliography block to the postdoc
     

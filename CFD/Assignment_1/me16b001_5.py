@@ -18,7 +18,7 @@ def calculate(n):
 	return(A)
 
 for x in range(1,11):
-	ival.append(calculate(10*x))
+	ival.append(calculate(30*x))
 
 
 for x in range(1,11):
@@ -33,7 +33,7 @@ t = Table([no , hval, ival, exact , error], names=('No','h', 'IntegralApprox' , 
 print(t)
 
 slope, intercept = np.polyfit(np.log(hval), np.log(error), 1)
-print("Slope of the log-log curve is: ",slope)
+print("\n Slope of the log-log curve is: ",slope)
 
 plt.scatter(np.log(hval), np.log(error))
 plt.ylabel('log(h)', fontsize=16)
