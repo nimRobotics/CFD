@@ -34,7 +34,9 @@ def TDMA(T,d, n):
 	a.append(ta)
 	b.append(tb)
 	T = diags([b,a,c], [0,-1, 1]).todense()
-	print(T)
+	#print(T)
+	#print("T",len(T))
+
 	for i in range(len(d)):
 		u.append(0)
 
@@ -56,8 +58,27 @@ def TDMA(T,d, n):
 		elif i!= len(d)-1:
 			u[i]=ds[i]-cs[i]*u[i+1]
 	return(u)
+
+n=299
+m=0.3/(n-1)
+c=(400/3)*m*m
 # Matrix equation AX=B, n is the number of nodes
-A = [[10, 5, 0,0,0],[5,15,5,0,0],[0,5,15,5,0],[0,0,5,15,5],[0,0,0,5,10]]
-B=[1100,100,100,100,100]
-n=10
-print(TDMA(A,B,n))
+A = [[1, 0, 0,0,0],[1,-(c+2),1,0,0],[0,1,-(c+2),1,0],[0,0,1,-(c+2),1],[0,0,0,2,-(c+2)]]
+B=[80,-c*20,-c*20,-c*20,-c*20]
+# plot of exact and Numerical
+
+
+NN=[10,20,40,50,80]
+for N in NN:
+	l=np.arange(0,0.3,0.3/N)
+	plt.plot(l, TDMA(list(A),list(B),N-1),label="N="+str(N))
+	print(N,len(TDMA(list(A),list(B),N-1)))
+x = np.arange(0, 0.3, 0.001)
+T_exact = 0.058728*np.exp((20*x)/(np.sqrt(3)))+59.9412719*np.exp((-20*x)/(np.sqrt(3)))+20
+
+plt.plot(x, T_exact, label="Exact")
+plt.plot(x, TDMA(list(A),list(B),int(n)),label="Numerical")
+plt.legend()
+plt.xlabel('Distance,x', fontsize=16)
+plt.ylabel('Temperature,T', fontsize=16)
+plt.show()
