@@ -65,20 +65,23 @@ c=(400/3)*m*m
 # Matrix equation AX=B, n is the number of nodes
 A = [[1, 0, 0,0,0],[1,-(c+2),1,0,0],[0,1,-(c+2),1,0],[0,0,1,-(c+2),1],[0,0,0,2,-(c+2)]]
 B=[80,-c*20,-c*20,-c*20,-c*20]
-# plot of exact and Numerical
 
-
+# NN=[10]
 NN=[10,20,40,50,80]
 for N in NN:
-	l=np.arange(0,0.3,0.3/N)
-	plt.plot(l, TDMA(list(A),list(B),N-1),label="N="+str(N))
-	print(N,len(TDMA(list(A),list(B),N-1)))
+	l=np.arange(0,0.30005,0.3/N)
+	# print(len(TDMA(list(A),list(B),N-1)))
+	# print(TDMA(list(A),list(B),N-1))
+	# print(l)
+	plt.plot(l, TDMA(list(A),list(B),N),label="N="+str(N))
+
 x = np.arange(0, 0.3, 0.001)
 T_exact = 0.058728*np.exp((20*x)/(np.sqrt(3)))+59.9412719*np.exp((-20*x)/(np.sqrt(3)))+20
 
-plt.plot(x, T_exact, label="Exact")
-plt.plot(x, TDMA(list(A),list(B),int(n)),label="Numerical")
+plt.plot(x, T_exact, label="Exact",color='orange')
+plt.plot(x, TDMA(list(A),list(B),int(n)),label="N=300", color='black')
 plt.legend()
-plt.xlabel('Distance,x', fontsize=16)
-plt.ylabel('Temperature,T', fontsize=16)
+plt.xlabel(r'$x (m)$', fontsize=16)
+plt.ylabel(r'$ T^{\circ}C $', fontsize=16)
+plt.suptitle('Temperature distribution along the fin length')
 plt.show()

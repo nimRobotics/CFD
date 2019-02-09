@@ -148,7 +148,8 @@
     \renewcommand{\TeX}{\textrm{\Oldtex}}
     \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
     % Document parameters
-       \title{Assignment 2 ME5102}
+    % Document title
+  \title{Assignment 2 ME5102}
 
 \author{Aakash \\ Email: \href{mailto:me16b001@iittp.ac.in}{me16b001@iittp.ac.in}}
     
@@ -295,50 +296,54 @@
 
 \section*{Problem 3: Explicit, implicit and CN time stepping
 schemes}\label{problem-3-explicit-implicit-and-cn-time-stepping-schemes}
-    \vspace{400px}
+    \vspace{300px}
+Given problem for which the solution has been attempted.
+\[ f=2te^{-t}-u\] \[ u(t=0)=1\] \[ 0\leq t \leq 2\]
+\textbf{\emph{Note:}} \emph{this is my third attempt of the same problem
+as it kept changing every now and then, doing one more time was not
+possible}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}2}]:} \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+{\color{incolor}In [{\color{incolor}3}]:} \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
         \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
         \PY{k+kn}{import} \PY{n+nn}{math}
         \PY{c+c1}{\PYZsh{} explicit scheme}
         \PY{n}{u}\PY{o}{=}\PY{p}{[}\PY{p}{]}
         \PY{n}{t}\PY{o}{=}\PY{l+m+mf}{0.01}
         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{200}\PY{p}{)}\PY{p}{:}
-            \PY{k}{if} \PY{n}{i}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{:}
-                \PY{n}{u}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+            \PY{k}{if} \PY{n}{i}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{:} \PY{c+c1}{\PYZsh{} case t=0}
+                \PY{n}{u}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.01}\PY{p}{)}
             \PY{k}{else}\PY{p}{:}
-                \PY{n}{u}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{u}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{+}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{t}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{t}\PY{p}{)}\PY{p}{)}
+                \PY{n}{u}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{u}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{+}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{t}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{t}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{n}{u}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
             \PY{n}{t}\PY{o}{=}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}
         \PY{c+c1}{\PYZsh{} implicit scheme}
         \PY{n}{ub}\PY{o}{=}\PY{p}{[}\PY{p}{]}
         \PY{n}{t}\PY{o}{=}\PY{l+m+mf}{0.01}
         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{200}\PY{p}{)}\PY{p}{:}
-            \PY{k}{if} \PY{n}{i}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{:}
-                \PY{n}{ub}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{o}{+} \PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+            \PY{k}{if} \PY{n}{i}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{:} \PY{c+c1}{\PYZsh{} case t=0}
+                \PY{n}{ub}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{+} \PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{l+m+mi}{2}\PY{o}{*}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}
             \PY{k}{else}\PY{p}{:}
-                \PY{n}{ub}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{ub}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{+}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+                \PY{n}{ub}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{ub}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{+}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{l+m+mi}{2}\PY{o}{*}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}
             \PY{n}{t}\PY{o}{=}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}
         \PY{c+c1}{\PYZsh{} CN scheme}
         \PY{n}{uc}\PY{o}{=}\PY{p}{[}\PY{p}{]}
         \PY{n}{t}\PY{o}{=}\PY{l+m+mf}{0.01}
         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{200}\PY{p}{)}\PY{p}{:}
             \PY{k}{if} \PY{n}{i}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{:}
-                \PY{n}{uc}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{o}{+}\PY{p}{(}\PY{l+m+mf}{0.5}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n}{t}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{t}\PY{p}{)}\PY{o}{+}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+                \PY{n}{uc}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{+}\PY{p}{(}\PY{l+m+mf}{0.5}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{t}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{t}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{o}{+}\PY{l+m+mi}{2}\PY{o}{*}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{+}\PY{l+m+mf}{0.005}\PY{p}{)}\PY{p}{)}
             \PY{k}{else}\PY{p}{:}
-                \PY{n}{uc}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{uc}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{+}\PY{p}{(}\PY{l+m+mf}{0.5}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n}{t}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{t}\PY{p}{)}\PY{o}{+}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+                \PY{n}{uc}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{uc}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{+}\PY{p}{(}\PY{l+m+mf}{0.5}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{t}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{t}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{n}{uc}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{+}\PY{l+m+mi}{2}\PY{o}{*}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{+}\PY{l+m+mf}{0.005}\PY{p}{)}\PY{p}{)}
             \PY{n}{t}\PY{o}{=}\PY{n}{t}\PY{o}{+}\PY{l+m+mf}{0.01}
         \PY{c+c1}{\PYZsh{} CN scheme end}
-        \PY{n}{t} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mf}{0.01}\PY{p}{)}
-        \PY{n}{u\PYZus{}exact} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{o}{*}\PY{p}{(}\PY{n}{t}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{t}\PY{p}{)}
         
-        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{t}\PY{p}{,} \PY{n}{u\PYZus{}exact}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Exact}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{t}\PY{p}{,} \PY{n}{u}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{explicit}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{t}\PY{p}{,} \PY{n}{ub}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{implicit}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n}{t} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mf}{0.01}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{t}\PY{p}{,} \PY{n}{u}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Explicit}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{t}\PY{p}{,} \PY{n}{ub}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Implicit}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{t}\PY{p}{,} \PY{n}{uc}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CN}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
         \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Time,t}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{t (s)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Solution, u}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{u vs time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
 \end{Verbatim}
 
@@ -346,7 +351,7 @@ schemes}\label{problem-3-explicit-implicit-and-cn-time-stepping-schemes}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_1_0.png}
     \end{center}
     { \hspace*{\fill} \\}
-        \vspace{1000px}
+    
     \section*{Problem 4: 1-D Heat loss through circular
 fin}\label{problem-4-1-d-heat-loss-through-circular-fin}
 
@@ -418,21 +423,25 @@ fin}\label{problem-4-1-d-heat-loss-through-circular-fin}
         \PY{c+c1}{\PYZsh{} Matrix equation AX=B, n is the number of nodes}
         \PY{n}{A} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{c}\PY{o}{+}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{c}\PY{o}{+}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{c}\PY{o}{+}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{c}\PY{o}{+}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{]}\PY{p}{]}
         \PY{n}{B}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{80}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{n}{c}\PY{o}{*}\PY{l+m+mi}{20}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{n}{c}\PY{o}{*}\PY{l+m+mi}{20}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{n}{c}\PY{o}{*}\PY{l+m+mi}{20}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{n}{c}\PY{o}{*}\PY{l+m+mi}{20}\PY{p}{]}
-        \PY{c+c1}{\PYZsh{} plot of exact and Numerical}
         
-        
+        \PY{c+c1}{\PYZsh{} NN=[10]}
         \PY{n}{NN}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{20}\PY{p}{,}\PY{l+m+mi}{40}\PY{p}{,}\PY{l+m+mi}{50}\PY{p}{,}\PY{l+m+mi}{80}\PY{p}{]}
         \PY{k}{for} \PY{n}{N} \PY{o+ow}{in} \PY{n}{NN}\PY{p}{:}
-        	\PY{n}{l}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mf}{0.3}\PY{p}{,}\PY{l+m+mf}{0.3}\PY{o}{/}\PY{n}{N}\PY{p}{)}
-        	\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{l}\PY{p}{,} \PY{n}{TDMA}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{A}\PY{p}{)}\PY{p}{,}\PY{n+nb}{list}\PY{p}{(}\PY{n}{B}\PY{p}{)}\PY{p}{,}\PY{n}{N}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}\PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{N=}\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{N}\PY{p}{)}\PY{p}{)}
+        	\PY{n}{l}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mf}{0.30005}\PY{p}{,}\PY{l+m+mf}{0.3}\PY{o}{/}\PY{n}{N}\PY{p}{)}
+        	\PY{c+c1}{\PYZsh{} print(len(TDMA(list(A),list(B),N\PYZhy{}1)))}
+        	\PY{c+c1}{\PYZsh{} print(TDMA(list(A),list(B),N\PYZhy{}1))}
+        	\PY{c+c1}{\PYZsh{} print(l)}
+        	\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{l}\PY{p}{,} \PY{n}{TDMA}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{A}\PY{p}{)}\PY{p}{,}\PY{n+nb}{list}\PY{p}{(}\PY{n}{B}\PY{p}{)}\PY{p}{,}\PY{n}{N}\PY{p}{)}\PY{p}{,}\PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{N=}\PY{l+s+s2}{\PYZdq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{N}\PY{p}{)}\PY{p}{)}
+        
         \PY{n}{x} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mf}{0.3}\PY{p}{,} \PY{l+m+mf}{0.001}\PY{p}{)}
         \PY{n}{T\PYZus{}exact} \PY{o}{=} \PY{l+m+mf}{0.058728}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{20}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{+}\PY{l+m+mf}{59.9412719}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{20}\PY{o}{*}\PY{n}{x}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{+}\PY{l+m+mi}{20}
         
-        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{T\PYZus{}exact}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Exact}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{TDMA}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{A}\PY{p}{)}\PY{p}{,}\PY{n+nb}{list}\PY{p}{(}\PY{n}{B}\PY{p}{)}\PY{p}{,}\PY{n+nb}{int}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{)}\PY{p}{,}\PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Numerical}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{T\PYZus{}exact}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Exact}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{orange}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{TDMA}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{A}\PY{p}{)}\PY{p}{,}\PY{n+nb}{list}\PY{p}{(}\PY{n}{B}\PY{p}{)}\PY{p}{,}\PY{n+nb}{int}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{)}\PY{p}{,}\PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{N=300}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{black}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
         \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Distance,x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Temperature,T}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}x (m)\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{} T\PYZca{}}\PY{l+s+s1}{\PYZob{}}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{circ\PYZcb{}C \PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Temperature distribution along the fin length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
 \end{Verbatim}
 
@@ -441,6 +450,9 @@ fin}\label{problem-4-1-d-heat-loss-through-circular-fin}
     \end{center}
     { \hspace*{\fill} \\}
     
+    Please note that the exact solution and solution with N = 300 are almost
+coinciding.
+
     \begin{Verbatim}[commandchars=\\\{\}]
 {\color{incolor}In [{\color{incolor} }]:} 
 \end{Verbatim}

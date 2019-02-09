@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np 
+import numpy as np
 from sympy import *
 ############################# col
 a_col = Symbol('a')
@@ -9,7 +9,7 @@ eqn_col =[]
 
 def function(x):
 	for x in val_col:
-		# calculating residuals 
+		# calculating residuals
 		eqn_col.append(-0.25+4*(x-1)*a_col+3*(3*(x**2)-4)*b_col-(2/(x**2)))
 	return(eqn_col)
 
@@ -32,7 +32,7 @@ r_lea = -0.25+4*(x_lea-1)*a_lea+3*(3*(x_lea**2)-4)*b_lea-(2/(x_lea**2))
 eqn_lea.append(integrate(r_lea*diff(r_lea,a_lea), (x_lea, 1, 2)))
 eqn_lea.append(integrate(r_lea*diff(r_lea,b_lea), (x_lea, 1, 2)))
 z_lea = solve(eqn_lea, [a_lea,b_lea])
-############################# galerian method
+############################# galerkian method
 a_gal = Symbol('a')
 b_gal = Symbol('b')
 x_gal = Symbol('x')
