@@ -1,3 +1,5 @@
+from sympy.solvers import solve
+from sympy import Symbol
 from sympy import *
 import matplotlib.pyplot as plt
 import numpy as np
