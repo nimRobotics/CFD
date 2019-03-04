@@ -71,7 +71,7 @@ def grid(H,D):
     #         plt.scatter(i,k,color='b',marker='+')
     # plt.show()
 
-h=128
+h=128 
 d=128
 c,d=grid(h,d)
 # print(c)
