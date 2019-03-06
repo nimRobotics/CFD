@@ -41,7 +41,7 @@ def kfmatixLin(nEle,domainLen,a,c,f):
     # print('k = ',k)
     # print('Ftemp',Ftemp)
     # print('F = ',F)
-    # three diagonals of the tridiagonal matrix
+    # two diagonals of the tridiagonal matrix
     diagA=[]
     diagB=[]
     # for three element 4*4 k matrix
@@ -70,9 +70,9 @@ def kfmatixQad(nEle,domainLen,a,c,f):
         xa.append((i-1)*(domainLen/nEle))
     for i in range(nEle):
         xc.append(0.5*xa[i]+0.5*xb[i])
-    print('xa',xa)
-    print('xb',xb)
-    print('xc',xc)
+    # print('xa',xa)
+    # print('xb',xb)
+    # print('xc',xc)
     k=[]
     Ftemp=[]
     # for ith element  # NOTE: [[element 1 k's],[element 2 k's], ...]
@@ -108,16 +108,13 @@ def kfmatixQad(nEle,domainLen,a,c,f):
         F.append(Ftemp[i+4])
         i=i+3
         t=t+1
-    # for i in range(0,nEle+1,3):
-    #     F.append(Ftemp[i+2]+Ftemp[i+3])
-    #     F.append(Ftemp[i+4])
     F.append(Ftemp[len(Ftemp)-1])
 
-    print('k = ',k)
-    print('Ftemp',Ftemp)
-    print('F = ',F)
-    print('len f',len(F))
-    # three diagonals of the tridiagonal matrix
+    # print('k = ',k)
+    # print('Ftemp',Ftemp)
+    # print('F = ',F)
+    # print('len f',len(F))
+    # three diagonals of the quadiagonal matrix
     diagA=[]
     diagB=[]
     diagC=[]
@@ -125,13 +122,13 @@ def kfmatixQad(nEle,domainLen,a,c,f):
     for i in range(nEle):
         diagA.append(k[i][1])
         diagA.append(k[i][5])
-    print('diagA',diagA)
+    # print('diagA',diagA)
 
     for i in range(nEle):
         diagC.append(k[i][2])
         if i!=nEle-1:
             diagC.append(0.0)
-    print('diagC',diagC)
+    # print('diagC',diagC)
 
     diagB.append(k[0][0])
     diagB.append(k[0][4])
@@ -140,7 +137,7 @@ def kfmatixQad(nEle,domainLen,a,c,f):
         diagB.append(k[i+1][4])
     diagB.append(k[nEle-1][8])
 
-    print('diagB',diagB)
+    # print('diagB',diagB)
     diagA=np.array(diagA, dtype=np.float64)
     diagB=np.array(diagB, dtype=np.float64)
     diagC=np.array(diagC, dtype=np.float64)
@@ -171,28 +168,52 @@ def solQ(k,f,nEle,bcs,method):
         return(solve(q1_eqn,q1),solve(q2_eqn,q2))
     elif len(bcs)==2:
         return(solve(q1_eqn,q1)[0].subs(bc1,bcs[0]),solve(q2_eqn,q2)[0].subs(bc2,bcs[1]))
-
-# length of the domain
+# def interplt(u,solyPoint,domainLen,nEle,method):
+#     if method=='linear':
+#         # np.arange(0,domainLen,domainLen/nEle)
+#         # print(np.arange(0,domainLen+0.001,domainLen/nEle))
+#         return(np.interp(solyPoint, np.arange(0,domainLen,domainLen/nEle,dtype='float64'), u))
+# user inputs
 domainLen=1
 # number of elements
-nEle=10
+nEle=3
 # problem data
 a=1
 c=-1
 f=-x*x
-kq,fq=kfmatixQad(nEle,domainLen,a,c,f)
-k,f=kfmatixLin(nEle,domainLen,a,c,f)
-# print('K matrix : \n',k)
-# print('f matrix : \n',f)
-# boundary conditions
-bcs=[2,30]
-q1,q2 = solQ(k,f,nEle,bcs,'linear')
-q1q,q2q=solQ(kq,fq,nEle,bcs,'Quadratic')
-# print(q1,q2)
-f[0]=f[0]+q1
-f[nEle]=f[nEle]+q2
-fq[0]=fq[0]+q1q
-fq[len(fq)-1]=fq[len(fq)-1]+q2
-# print('f + Q matrix : \n',f)
-print('Solution, U : \n',linalg.inv(k).dot(f))
-print('Solution Quadratic, U : \n',linalg.inv(kq).dot(fq))
+method='linear' # accepts 'Quadratic','linear','Both'
+# dirchlet boundary conditions values at left and right end
+bcs=[2,3] # assumed boundary values [left end,right end]
+# point at which Solution value is desired
+# solyPoint=0.5
+
+if method=='Quadratic':
+    kq,fq=kfmatixQad(nEle,domainLen,a,c,f)
+    q1q,q2q=solQ(kq,fq,nEle,bcs,'Quadratic')
+    fq[0]=fq[0]+q1q
+    fq[len(fq)-1]=fq[len(fq)-1]+q2q
+    sq=linalg.inv(kq).dot(fq)
+    print('Quadratic Solution, U : \n',sq)
+
+elif method=='linear':
+    k,f=kfmatixLin(nEle,domainLen,a,c,f)
+    q1,q2 = solQ(k,f,nEle,bcs,'linear')
+    f[0]=f[0]+q1
+    f[nEle]=f[nEle]+q2
+    sl=linalg.inv(k).dot(f)
+    # print('Solution at required point ',interplt(sl,solyPoint,domainLen,nEle,'linear'))
+    print('Linear Solution, U : \n',sl)
+
+elif method=='Both':
+    kq,fq=kfmatixQad(nEle,domainLen,a,c,f)
+    q1q,q2q=solQ(kq,fq,nEle,bcs,'Quadratic')
+    fq[0]=fq[0]+q1q
+    fq[len(fq)-1]=fq[len(fq)-1]+q2q
+    sq=linalg.inv(kq).dot(fq)
+    print('Quadratic Solution, U : \n',sq)
+    k,f=kfmatixLin(nEle,domainLen,a,c,f)
+    q1,q2 = solQ(k,f,nEle,bcs,'linear')
+    f[0]=f[0]+q1
+    f[nEle]=f[nEle]+q2
+    sl=linalg.inv(k).dot(f)
+    print('\nLinear Solution, U : \n',sl)
