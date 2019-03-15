@@ -168,11 +168,7 @@ def solQ(k,f,nEle,bcs,method):
         return(solve(q1_eqn,q1),solve(q2_eqn,q2))
     elif len(bcs)==2:
         return(solve(q1_eqn,q1)[0].subs(bc1,bcs[0]),solve(q2_eqn,q2)[0].subs(bc2,bcs[1]))
-# def interplt(u,solyPoint,domainLen,nEle,method):
-#     if method=='linear':
-#         # np.arange(0,domainLen,domainLen/nEle)
-#         # print(np.arange(0,domainLen+0.001,domainLen/nEle))
-#         return(np.interp(solyPoint, np.arange(0,domainLen,domainLen/nEle,dtype='float64'), u))
+
 # user inputs
 domainLen=1
 # number of elements
@@ -181,11 +177,9 @@ nEle=3
 a=1
 c=-1
 f=-x*x
-method='linear' # accepts 'Quadratic','linear','Both'
+method='Both' # accepts 'Quadratic','linear','Both'
 # dirchlet boundary conditions values at left and right end
 bcs=[2,3] # assumed boundary values [left end,right end]
-# point at which Solution value is desired
-# solyPoint=0.5
 
 if method=='Quadratic':
     kq,fq=kfmatixQad(nEle,domainLen,a,c,f)
@@ -201,7 +195,6 @@ elif method=='linear':
     f[0]=f[0]+q1
     f[nEle]=f[nEle]+q2
     sl=linalg.inv(k).dot(f)
-    # print('Solution at required point ',interplt(sl,solyPoint,domainLen,nEle,'linear'))
     print('Linear Solution, U : \n',sl)
 
 elif method=='Both':

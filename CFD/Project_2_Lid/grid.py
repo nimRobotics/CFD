@@ -31,50 +31,52 @@ import numpy as np
 from array import *
 from scipy.sparse import *
 
-def grid(H,D):
-    # use gama to change the gaussian distibution
-    gama=3
+def grid(nx,ny, gama):
     # use ty tx to change number of elements
-    tx=0.1
-    ty=0.1
+    tx=(2)/((nx+1)+1)
+    ty=(2)/((ny+1)+1)
     x=[]
     y=[]
     nx=[]
     ny=[]
 
-    for i in np.arange(0., 3., tx):
+    # x elements on left half
+    for i in np.arange(0., 1., tx):
         nx.append(i)
     for j in nx:
         x.append(1-(np.tanh(gama*(1-(2*j)/len(nx))))/(np.tanh(gama)))
 
-    for i in np.arange(0., 3., ty):
+    # y elements on right half
+    for i in np.arange(0., 1., ty):
         ny.append(i)
     for i in ny:
         y.append(1-(np.tanh(gama*(1-(2*i)/len(ny))))/(np.tanh(gama)))
 
+    # mirroring x and y elements for the right half
     for i in range(len(nx)-1):
         x.append(x[len(nx)+i-1]+x[len(nx)-(i+1)]-x[len(nx)-(i+2)])
     for i in range(len(ny)-1):
         y.append(y[len(ny)+i-1]+y[len(ny)-(i+1)]-y[len(ny)-(i+2)])
-    # D=128
-    # H=128
+
     xd=[]
     yh=[]
     for i in x:
-        xd.append((i/(x[len(x)-1]))*D)
+        xd.append(i/(x[len(x)-1]))
     for i in y:
-        yh.append((i/(y[len(y)-1]))*H)
+        yh.append(i/(y[len(y)-1]))
     return(xd,yh)
-    # NOTE: use below code to print grid
-    # for i in x:
-    #     for k in y:
-    #         plt.scatter(i,k,color='b',marker='+')
-    # plt.show()
 
-h=128 
-d=128
-c,d=grid(h,d)
-# print(c)
+# number of grid points in x direction
+nx=128
+# number of grid points un y direction
+ny=128
+# use gama to change the gaussian distibution
+# as gama --> 0 grid becomes uniform
+gama=15
+c,d=grid(nx,ny,gama)
+print(c)
+print("\n",d)
+
 for i in c:
     for k in d:
         plt.scatter(i,k,color='b',marker='+')

@@ -39,7 +39,7 @@ def Temp(scheme,tinter,s,h):
     return(T)
 #  inputs for calling the function (scheme,time interim,time step, space step)
 method=1
-tin=2
+tin=0.5
 s=0.05
 h=0.02
 print(Temp(method,tin,s,h))
