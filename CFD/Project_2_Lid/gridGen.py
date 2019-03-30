@@ -50,18 +50,7 @@ def gridPlot(c,d):
             plt.scatter(i,k,color='black',marker='+')
     plt.show()
 
-# # number of grid points in x direction
-# nx=10
-# # number of grid points un y direction
-# ny=10
-# # use gama to change the gaussian distibution
-# # as gama --> 0 grid becomes uniform
-# gama=15
-# c,d=grid(nx,ny,gama)
-# # print(c)
-# # print(grid(nx,ny,gama)[0])
-# gridPlot(grid(nx,ny,gama)[0],grid(nx,ny,gama)[1])
-# # for i in c:
-# #     for k in d:
-# #         plt.scatter(i,k,color='b',marker='+')
-# # plt.show()
+# NOTE: call from any program using
+# from gridGen import grid,gridPlot
+# x,y=grid(10,10,3)   # accepts (nx, ny, game)
+# gridPlot(grid(10,10,3)[0],grid(10,10,3)[1])

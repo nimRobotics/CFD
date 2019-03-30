@@ -243,7 +243,7 @@ In the analysis that follows we will drop the 'hat' notation for dimensionless v
 \\*
 Discretiztion of equation \ref{eqn:streamFnEqn3} using forward time and central differencing scheme. Second order accurate in space.
 \begin{equation}
-\frac{\psi_{i+1,j}-2\psi_{i,j}+\psi_{i-1,j} }{(\Delta x)^2} + \frac{\psi_{i,j+1}-2\psi_{i,j}+\psi_{i,j-1}}{(\Delta y)^2} = -\omega_z(i,j)
+\frac{\psi_{i+1,j}-2\psi_{i,j}+\psi_{i-1,j} }{(\Delta x)^2} + \frac{1}{r^2}\frac{\psi_{i,j+1}-2\psi_{i,j}+\psi_{i,j-1}}{(\Delta y)^2} = -\omega_{zij}
 \end{equation}
 Von-Newmann stability analysis for the above equation -
 \\*
@@ -254,7 +254,7 @@ Discretiztion of equation \ref{eqn:vorticityEqn4}  using forward time and centra
   = \frac{1}{Re}\left[\left(\frac{\omega_{i+1,j}-2\omega_{i,j}+\omega_{i-1,j}}{(\Delta x)^2}\right)+\frac{1}{r^2}\left(\frac{\omega_{i,j+1}-2\omega_{i,j}+\omega_{i,j-1}}{(\Delta y)^2}\right) \right]
 \end{split}
 \end{equation}
-Von-Newmann stability analysis for the above equation -
+Von-Neutmann stability analysis for the above equation -
 % von newmann stability is only valid for linear equation, so check if the above equation is linear
 % we will be using adaptive time marching scheme for this
 
