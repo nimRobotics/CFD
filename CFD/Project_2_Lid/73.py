@@ -3,13 +3,6 @@ import scipy.linalg
 import numpy as np
 import matplotlib.pyplot as plt
 
-H=1    # length of the cavity
-D=1    # depth of the cavity
-r=H/D  # aspect ratio
-Re=10 # reynolds number
-nx=100 # number of elements in x direction
-ny=110 # number of elements in y direction
-
 # fn returns delta x delta y
 def uGridPoints():
     return(H/nx,D/ny)
@@ -62,8 +55,17 @@ def plotContour(matrix):
     cs.cmap.set_under('blue')
     cs.changed()
     plt.show()
-    
+
 # TODO: check the BCs in initialize fnc
+# TODO: use upwind scheme second order
+
+H=1    # length of the cavity
+D=1    # depth of the cavity
+r=H/D  # aspect ratio
+Re=10 # reynolds number
+nx=100 # number of elements in x direction
+ny=110 # number of elements in y direction
+
 w,psi =calculation()
 plotContour(psi)
 plotContour(w)

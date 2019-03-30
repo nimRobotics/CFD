@@ -50,6 +50,11 @@ def gridPlot(c,d):
             plt.scatter(i,k,color='black',marker='+')
     plt.show()
 
+def spacing(test_list):
+    res = [test_list[i + 1] - test_list[i] for i in range(len(test_list)-1)]
+    return(res)
+
+
 # NOTE: call from any program using
 # from gridGen import grid,gridPlot
 # x,y=grid(10,10,3)   # accepts (nx, ny, game)

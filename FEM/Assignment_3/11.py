@@ -38,7 +38,7 @@ def kfmatixLin(nEle,domainLen,a,c,f):
         F.append(Ftemp[i+1]+Ftemp[i+2])
     F.append(Ftemp[len(Ftemp)-1])
 
-    # print('k = ',k)
+    print('k = ',k)
     # print('Ftemp',Ftemp)
     # print('F = ',F)
     # two diagonals of the tridiagonal matrix
@@ -82,12 +82,9 @@ def solQ(k,f,nEle,bcs,method):
     # print(sol)
     return(sol)
 
-
-
-
 # user inputs
 domainLen=1
-nEle=5
+nEle=3
 a=1
 c=-1
 f=-x*x
