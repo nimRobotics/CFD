@@ -54,6 +54,16 @@ def spacing(test_list):
     res = [test_list[i + 1] - test_list[i] for i in range(len(test_list)-1)]
     return(res)
 
+def uGrid(nx,ny):
+    l1=[]
+    l2=[]
+    for i in range(nx+1):
+        l1.append(1/(nx+1))
+    for i in range(ny+1):
+        l2.append(1/(ny+1))
+    return(l1,l2)
+
+# print(uGrid(10,10))
 
 # NOTE: call from any program using
 # from gridGen import grid,gridPlot
