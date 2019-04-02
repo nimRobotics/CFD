@@ -63,9 +63,9 @@ def uGrid(nx,ny):
         l2.append(1/(ny+1))
     return(l1,l2)
 
-# print(uGrid(10,10))
-
-# NOTE: call from any program using
-# from gridGen import grid,gridPlot
-# x,y=grid(10,10,3)   # accepts (nx, ny, game)
-# gridPlot(grid(10,10,3)[0],grid(10,10,3)[1])
+# # print(uGrid(10,10))
+# print(grid(10,10,3))
+# # NOTE: call from any program using
+# # from gridGen import grid,gridPlot
+# # x,y=grid(10,10,3)   # accepts (nx, ny, game)
+# gridPlot(grid(10,10,1)[0],grid(10,10,1)[1])
