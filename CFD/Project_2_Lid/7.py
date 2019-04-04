@@ -39,106 +39,106 @@ def bcsApply(wMat,psiMat):
 def calculation():
     a,b = initialize()
     wMat,psiMat = bcsApply(a,b)
-    print("\nBC applied\n",bcsApply(a,b))
-    # 
-    # # calculation of w1
-    # for i in range(1,nx):
-    #     for j in range(1,ny):
-    #         # equations for w(n+1)
-    #         LHS = (1/r)*(((psiMat[i,j+1]-psiMat[i,j-1])/(dy[i]+dy[i-1]))*((wMat[i+1,j]-wMat[i-1,j])/(dx[i]+dx[i-1]))-\
-    #                      ((psiMat[i+1,j]-psiMat[i-1,j])/(dx[i]+dx[i-1]))*((wMat[i,j+1]-wMat[i,j-1])/(dy[i]+dy[i-1])))
-    #
-    #         dt=0.01   # first time step
-    #         ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
-    #         ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
-    #
-    #         wMat[i,j]=wMat[i,j]+ dt*(-LHS + (1/Re)*(2*(dx[i-1]*wMat[i+1,j]+dx[i]*wMat[i-1,j]-(dx[i]+dx[i-1])*wMat[i,j])/ddx+\
-    #                                      (1/(r**2))*2*(dy[i-1]*wMat[i,j+1]+dy[i]*wMat[i,j-1]-(dy[i]+dy[i-1])*wMat[i,j])/ddy))
-    # # print("w at 1",wMat)
-    #
-    # # while loop for time steps  psi(n) and w(n+1)
-    # nt=0
-    # while nt<30:
-    #     nt=nt+1
-    #
-    #     # calculation of psi at new time step
-    #     for i in range(1,nx):
-    #         for j in range(1,ny):
-    #             # stream function equation
-    #             ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
-    #             ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
-    #
-    #             a = ((r**2)*ddx*ddy)/((r**2)*ddy*(dx[i]+dx[i-1])+ddx*(dy[i]+dy[i-1]))
-    #
-    #             psiMat[i,j] = a*(wMat[i,j] + 2*(dx[i-1]*psiMat[i+1,j]+dx[i]*psiMat[i-1,j])/ddx + \
-    #                               (1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1])/ddy)
-    #
-    #     # Iteration of psi at the new time step
-    #     nIteration = 0
-    #     while nIteration<100:
-    #         nIteration = nIteration+1
-    #         for i in range(1,nx):
-    #             for j in range(1,ny):
-    #                 psiMat[i,j]=(psiMat[i-1,j]+psiMat[i+1,j]+psiMat[i,j-1]+psiMat[i,j+1])/4
-    #
-    #                 ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
-    #                 ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
-    #                 # resiudal
-    #                 res1 = wMat[i,j] + 2*(dx[i-1]*psiMat[i+1,j]+dx[i]*psiMat[i-1,j]-(dx[i]+dx[i-1])*psiMat[i,j])/ddx \
-    #                       + (1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1]-(dy[i]+dy[i-1])*psiMat[i,j])/ddy
-    #
-    #         if abs(res1)<(10**(-5)):
-    #             break
-    #             print("Itereation finished")
-    #
-    #     print("res",res1)
-    #     print("Interations ",nIteration)
-    #     print("psimat",psiMat)
-    #
-    #     # CFL criteria
-    #     it=1
-    #     dt = cflAnal(it)
-    #     it=it+1
-    #
-    #     #  omega at next time step
-    #     for i in range(1,nx):
-    #         for j in range(1,ny):
-    #             LHS = (1/r)*(((psiMat[i,j+1]-psiMat[i,j-1])/(dy[i]+dy[i-1]))*((wMat[i+1,j]-wMat[i-1,j])/(dx[i]+dx[i-1]))-\
-    #                          ((psiMat[i+1,j]-psiMat[i-1,j])/(dx[i]+dx[i-1]))*((wMat[i,j+1]-wMat[i,j-1])/(dy[i]+dy[i-1])))
-    #
-    #             ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
-    #             ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
-    #
-    #             wMat[i,j]=wMat[i,j]+ dt*(-LHS + (1/Re)*(2*(dx[i-1]*wMat[i+1,j]+dx[i]*wMat[i-1,j]-(dx[i]+dx[i-1])*wMat[i,j])/ddx+\
-    #                                          (1/(r**2))*2*(dy[i-1]*wMat[i,j+1]+dy[i]*wMat[i,j-1]-(dy[i]+dy[i-1])*wMat[i,j])/ddy))
-    #
-    #     # TODO: implement a break here for steady state
-    #
-    # # calculation psi at last time step
-    # nIteration = 0
-    # while nIteration<100:
-    #     nIteration = nIteration+1
-    #     for i in range(1,nx):
-    #         for j in range(1,ny):
-    #             psiMat[i,j]=(psiMat[i-1,j]+psiMat[i+1,j]+psiMat[i,j-1]+psiMat[i,j+1])/4
-    #
-    #             ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
-    #             ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
-    #             # resiudal
-    #             res1 = wMat[i,j] + 2*(dx[i-1]*psiMat[i+1,j]+dx[i]*psiMat[i-1,j]-(dx[i]+dx[i-1])*psiMat[i,j])/ddx \
-    #                   + (1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1]-(dy[i]+dy[i-1])*psiMat[i,j])/ddy
-    #
-    #     if abs(res1)<(10**(-5)):
-    #         break
-    #         print("Itereation finished")
-    #
-    # print("res",res1)
-    # print("Interations ",nIteration)
-    # print("psimat",psiMat)
-    # print("wMat",wMat)
+    # print("\nBC applied\n",bcsApply(a,b))
 
-    # plotContour(np.flipud(wMat))
-    # plotContour(psiMat)
+    # calculation of w1
+    for i in range(1,nx):
+        for j in range(1,ny):
+            # equations for w(n+1)
+            LHS = (1/r)*(((psiMat[i,j+1]-psiMat[i,j-1])/(dy[i]+dy[i-1]))*((wMat[i+1,j]-wMat[i-1,j])/(dx[i]+dx[i-1]))-\
+                         ((psiMat[i+1,j]-psiMat[i-1,j])/(dx[i]+dx[i-1]))*((wMat[i,j+1]-wMat[i,j-1])/(dy[i]+dy[i-1])))
+
+            dt=0.01   # first time step
+            ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
+            ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
+
+            wMat[i,j]=wMat[i,j]+ dt*(-LHS + (1/Re)*(2*(dx[i-1]*wMat[i+1,j]+dx[i]*wMat[i-1,j]-(dx[i]+dx[i-1])*wMat[i,j])/ddx+\
+                                         (1/(r**2))*2*(dy[i-1]*wMat[i,j+1]+dy[i]*wMat[i,j-1]-(dy[i]+dy[i-1])*wMat[i,j])/ddy))
+    # print("w at 1",wMat)
+
+    # while loop for time steps  psi(n) and w(n+1)
+    nt=0
+    while nt<30:
+        nt=nt+1
+
+        # calculation of psi at new time step
+        for i in range(1,nx):
+            for j in range(1,ny):
+                # stream function equation
+                ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
+                ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
+
+                a = ((r**2)*ddx*ddy)/((r**2)*ddy*(dx[i]+dx[i-1])+ddx*(dy[i]+dy[i-1]))
+
+                psiMat[i,j] = a*(wMat[i,j] + 2*(dx[i-1]*psiMat[i+1,j]+dx[i]*psiMat[i-1,j])/ddx + \
+                                  (1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1])/ddy)
+
+        # Iteration of psi at the new time step
+        nIteration = 0
+        while nIteration<100:
+            nIteration = nIteration+1
+            for i in range(1,nx):
+                for j in range(1,ny):
+                    psiMat[i,j]=(psiMat[i-1,j]+psiMat[i+1,j]+psiMat[i,j-1]+psiMat[i,j+1])/4
+
+                    ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
+                    ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
+                    # resiudal
+                    res1 = wMat[i,j] + 2*(dx[i-1]*psiMat[i+1,j]+dx[i]*psiMat[i-1,j]-(dx[i]+dx[i-1])*psiMat[i,j])/ddx \
+                          + (1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1]-(dy[i]+dy[i-1])*psiMat[i,j])/ddy
+
+            if abs(res1)<(10**(-5)):
+                break
+                print("Itereation finished")
+
+        print("res",res1)
+        print("Interations ",nIteration)
+        print("psimat",psiMat)
+
+        # CFL criteria
+        it=1
+        dt = cflAnal(it)
+        it=it+1
+
+        #  omega at next time step
+        for i in range(1,nx):
+            for j in range(1,ny):
+                LHS = (1/r)*(((psiMat[i,j+1]-psiMat[i,j-1])/(dy[i]+dy[i-1]))*((wMat[i+1,j]-wMat[i-1,j])/(dx[i]+dx[i-1]))-\
+                             ((psiMat[i+1,j]-psiMat[i-1,j])/(dx[i]+dx[i-1]))*((wMat[i,j+1]-wMat[i,j-1])/(dy[i]+dy[i-1])))
+
+                ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
+                ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
+
+                wMat[i,j]=wMat[i,j]+ dt*(-LHS + (1/Re)*(2*(dx[i-1]*wMat[i+1,j]+dx[i]*wMat[i-1,j]-(dx[i]+dx[i-1])*wMat[i,j])/ddx+\
+                                             (1/(r**2))*2*(dy[i-1]*wMat[i,j+1]+dy[i]*wMat[i,j-1]-(dy[i]+dy[i-1])*wMat[i,j])/ddy))
+
+        # TODO: implement a break here for steady state
+
+    # calculation psi at last time step
+    nIteration = 0
+    while nIteration<100:
+        nIteration = nIteration+1
+        for i in range(1,nx):
+            for j in range(1,ny):
+                psiMat[i,j]=(psiMat[i-1,j]+psiMat[i+1,j]+psiMat[i,j-1]+psiMat[i,j+1])/4
+
+                ddx = dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2
+                ddy = dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2
+                # resiudal
+                res1 = wMat[i,j] + 2*(dx[i-1]*psiMat[i+1,j]+dx[i]*psiMat[i-1,j]-(dx[i]+dx[i-1])*psiMat[i,j])/ddx \
+                      + (1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1]-(dy[i]+dy[i-1])*psiMat[i,j])/ddy
+
+        if abs(res1)<(10**(-5)):
+            break
+            print("Itereation finished")
+
+    print("res",res1)
+    print("Interations ",nIteration)
+    print("psimat",psiMat)
+    print("wMat",wMat)
+
+    plotContour(np.flipud(wMat))
+    plotContour(psiMat)
 
 nx=10  # elements in x dir
 ny=10  # elements in y dir
