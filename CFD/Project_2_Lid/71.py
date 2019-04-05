@@ -2,84 +2,130 @@ from numpy import *
 import scipy.linalg
 import numpy as np
 import matplotlib.pyplot as plt
-from gridGen import grid,gridPlot,spacing
+from gridGen import grid,gridPlot,spacing,uGrid
+
+def plotContour(matrix):
+    cs = plt.contourf(matrix,  extend='both')
+    cs.cmap.set_over('red')
+    cs.cmap.set_under('blue')
+    cs.changed()
+    plt.show()
+
+def cflAnal(u,v,tIt):
+    # applying cfl criteria
+    dt1=[]
+    for i in range(1,ny):
+        for j in range(1,nx):
+            dt1.append(abs((Re/2)*((1/(dx[i]**2))+(1/(r*r*dy[j]**2)))**(-1)))
+    if tIt==0:
+        return(min(dt1))
+    else:
+        dt2=[]
+        for i in range(1,ny):
+            for j in range(1,nx):
+                dt2.append(abs((u[i,j]/dx[i] + v[i,j]/dy[j])**(-1)))
+        return(0.99*min(min(dt1),min(dt2)))
+    # return(0.001)
 
 def initialize():
-    return(zeros((nx+1,ny+1)),zeros((nx+1,ny+1)))
+    return(zeros((nx+1,ny+1)),zeros((nx+1,ny+1)),zeros((nx+1,ny+1)),zeros((nx+1,ny+1)))
 
-def bcsApply(wMat,pMat):
+def bcsApply(wMat,psiMat,u,v):
     # applying bc on omega
     for j in range(ny+1):
-        wMat[j,0] = 2*(pMat[0,j]-pMat[1,j])/(dx[0]**2)    # left wall
-        wMat[j,nx] = 2*(pMat[nx,j]-pMat[nx-1,j])/(dx[0]**2) # right wall
-    for i in range(nx+1):
-        wMat[0,i] = 2*(pMat[i,0]-pMat[i,1])/(dy[0]**2)    # bottom wall
-        wMat[ny,i] = 2*(pMat[i,ny]-pMat[i-1,ny])/(dy[0]**2)-(2*U)/dy[0] # top wall
+        wMat[0,j] = 2*(psiMat[0,j]-psiMat[0,j-1])/(dy[0]**2)-(2*U)/dy[0]
+    # use central differncing for second row
+    print(u)
+    for j in range(ny+1):
+        wMat[1,j] = -(u[0,j]-u[2,j])/(dy[0]+dy[1])
 
     # applying BC, psi is zero at all the boundaries
-    pMat[0,:]=0    # left wall
-    pMat[nx,:]=0   # right wall
-    pMat[:,0]=0    # bottom wall
-    pMat[:,ny]=0   # top wall
-    # print(wMat)
-    return(np.flipud(wMat),np.flipud(pMat))
+    psiMat[0,:]=0    # left wall
+    psiMat[nx,:]=0   # right wall
+    psiMat[:,0]=0    # bottom wall
+    psiMat[:,ny]=0   # top wall
+    return(wMat,psiMat)
 
 def calculation():
-    a,b = initialize()
-    wMat,pMat = bcsApply(a,b)
-    # print("BC applied",bcsApply(a,b))
+    a,b,u,v = initialize()
+    u[0,:]=1  #  top layer with vel = U
+    wMat,psiMat = bcsApply(a,b,u,v)
+    print("\nBC applied\n wmatrix",wMat,"\n psiMat\n",psiMat)
 
-    nIteration = 0
-    while nIteration<5:
-        nIteration = nIteration+1
+    tItMax=10000
+    tIt=0
+    while tIt<tItMax:
+        # find in the velocities u,v from psiMat
+        for i in range(1,ny):
+            for j in range(1,nx):
+                u[i,j] = (psiMat[i,j+1]-psiMat[i,j-1])/(dy[i]+dy[i-1])
+                v[i,j] = -(psiMat[i+1,j]-psiMat[i-1,j])/(dx[i]+dx[i-1])
+        # print("\nu",u,"\nv",v)
+
+        dt = cflAnal(u,v,tIt)
+        print("\ntime step : ",dt)
+        # calculation of wMat at time n+1
         for i in range(1,nx):
             for j in range(1,ny):
-                # stream function equation
-                a = (((r**2)*(dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2)*(dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2))/\
-                (((r**2))*(dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2)*(dx[i]+dx[i-1])+\
-                (dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2)*(dy[i]+dy[i-1])))
+                LHS = u[i,j]*((wMat[i+1,j]-wMat[i-1,j])/(dx[i]+dx[i-1])) + v[i,j]*((wMat[i,j+1]-wMat[i,j-1])/(dy[i]+dy[i-1]))
+                ddx = dx[i-1]*(dx[i]**2)+dx[i]*(dx[i-1]**2)
+                ddy = dy[i-1]*(dy[i]**2)+dy[i]*(dy[i-1]**2)
 
-                pMat[i,j] = a*(wMat[i,j]+2*(dx[i-1]*pMat[i+1,j]+dx[i]*pMat[i-1,j])/(dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2)+\
-                (1/(r**2))*2*(dy[i-1]*pMat[i,j+1]+dy[i]*pMat[i,j-1])/(dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2))
+                wMat[i,j]=wMat[i,j]+ dt*(-LHS + (1/Re)*(2*(dx[i-1]*wMat[i+1,j]+dx[i]*wMat[i-1,j]-(dx[i]+dx[i-1])*wMat[i,j])/ddx+\
+                                             (1/(r**2))*2*(dy[i-1]*wMat[i,j+1]+dy[i]*wMat[i,j-1]-(dy[i]+dy[i-1])*wMat[i,j])/ddy))
 
-                # vorticty formulation, ignoring temporal derivative
-                LHS = (Re/r)*(((pMat[i,j+1]-pMat[i,j-1])/(dy[i]+dy[i-1]))*((wMat[i+1,j]-wMat[i-1,j])/(dx[i]+dx[i-1]))-\
-                ((pMat[i+1,j]-pMat[i-1,j])/(dx[i]+dx[i-1]))*((wMat[i,j+1]-wMat[i,j-1])/(dy[i]+dy[i-1])))
-                b = (((r**2)*(dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2)*(dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2))/\
-                ((dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2)*(dy[i]+dy[i-1])+(r**2)*(dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2)*(dx[i]+dx[i-1])))
+                # print(LHS)
+        print("\nwMat at time ",tIt," step ",wMat)
 
-                wMat[i,j] = b*(-LHS+2*(dx[i-1]*wMat[i+1,j]+dx[i]*wMat[i-1,j])/(dx[i-1]*dx[i]**2 + dx[i]*dx[i-1]**2)+\
-                (1/(r**2))*(dy[i-1]*wMat[i,j+1]+dy[i]*wMat[i,j-1])/(dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2))
+        # calculation of psiMat at time n+1
+        # Iteration for psiMat
+        pItMax=1000
+        pIt=0
+        while pIt<pItMax:
+            for i in range(1,nx):
+                for j in range(1,ny):
+                    # stream function equation
+                    ddx = dx[i-1]*(dx[i]**2)+dx[i]*(dx[i-1]**2)
+                    ddy = dy[i-1]*(dy[i]**2)+dy[i]*(dy[i-1]**2)
 
-                # resiudals
-                res1 = wMat[i,j] \
-                + 2*(dx[i-1]*pMat[i+1,j]+dx[i]*pMat[i-1,j]-(dx[i]+dx[i-1])*pMat[i,j])/(dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2) \
-                + (1/(r**2))*2*(dy[i-1]*pMat[i,j+1]+dy[i]*pMat[i,j-1]-(dy[i]+dy[i-1])*pMat[i,j])/(dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2)
+                    a = 0.5*((r**2)*ddx*ddy)/((r**2)*ddy*(dx[i]+dx[i-1])+ddx*(dy[i]+dy[i-1]))
 
-                res2 = -LHS + 2*(dx[i-1]*wMat[i+1,j]+dx[i]*wMat[i-1,j]-(dx[i]+dx[i-1])*wMat[i,j])/(dx[i-1]*dx[i]**2+dx[i]*dx[i-1]**2)+\
-                   (1/(r**2))*2*(dy[i-1]*pMat[i,j+1]+dy[i]*pMat[i,j-1]-(dy[i]+dy[i-1])*pMat[i,j])/(dy[i-1]*dy[i]**2+dy[i]*dy[i-1]**2)
-        # print("wMatrix",wMat)
-        # print("psiMatrix",pMat)
-        # break if resiudal is close to zero
-        if abs(res1)<1 and abs(res2)<1:
-            break
-            print("Itereation finished")
+                    psiMat[i,j] = a*( wMat[i,j] + (2*(dx[i-1]*psiMat[i+1,j]+dx[i]*psiMat[i-1,j])/ddx) + \
+                                       ((1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1])/ddy))
+                    # resiudal
+                    res1 = wMat[i,j] + (2*(dx[i-1]*psiMat[i+1,j]+dx[i]*psiMat[i-1,j]-(dx[i]+dx[i-1])*psiMat[i,j])/ddx) \
+                          + ((1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1]-(dy[i]+dy[i-1])*psiMat[i,j])/ddy)
 
-    print("\nres1\n",res1)
-    print("\nres2\n",res2)
-    print("\nNo of Itereations\n",nIteration)
-    print("\nOmega Matrix\n",wMat)
-    print("\nPsi Matrix\n",pMat)
+            if abs(res1)<(10**(-6)):
+                break
+                print("Iteration finished")
+
+            pIt=pIt+1 # counter for psiMat Iterations
+        print("\npsiMat at ",tIt," step ",psiMat)
+
+        tIt=tIt+1 # counter for time steps
+
+        # time varying contour plot
+        plt.ion()
+        cs = plt.contourf(flipud(psiMat),  extend='both')
+        cs.cmap.set_over('red')
+        cs.cmap.set_under('blue')
+        cs.changed()
+        plt.pause(0.0001)
+        plt.clf()
 
 
-nx=10  # elements in x dir
-ny=10  # elements in y dir
+nx=50  # elements in x dir
+ny=50  # elements in y dir
 U = 1  # mormalized plate velocity
-Re = 10 # reynolds number
+Re = 100 # reynolds number
 r = 1 # aspect ratio
-x,y=grid(nx,ny,2)   # accepts (nx, ny, stretching param)
-# gridPlot(x,y)     # plot the grid
+
+x,y=grid(nx,ny,3)   # accepts (nx, ny, stretching param)
 dx=spacing(x)  # grid divisions, symmetric
 dy=spacing(y)  # grid divisions, symmetric
+# print(dx)
+# gridPlot(x,y)     # plot the grid
+# dx,dy=uGrid(nx,ny)  # for non uniform grid
 
 calculation()
