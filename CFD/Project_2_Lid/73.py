@@ -40,7 +40,7 @@ def calculation():
                 rs2 = LHS - (((wMatrix[i+1,j]-2*wMatrix[i,j]+wMatrix[i-1,j])/(dx**2))+(1/(r**2))*((wMatrix[i,j+1]-2*wMatrix[i,j]+wMatrix[i,j-1])/(dx**2)))
 
         # break if resiudal is close to zero
-        if rs1<1 and rs2<1:
+        if abs(rs1)<1 and abs(rs2)<1:
             break
 
     print(rs1)

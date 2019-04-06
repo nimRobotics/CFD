@@ -4,32 +4,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 from gridGen import grid,gridPlot,spacing,uGrid
 
-def plotContour(matrix):
-    cs = plt.contourf(matrix,  extend='both')
-    cs.cmap.set_over('red')
-    cs.cmap.set_under('blue')
-    cs.changed()
-    plt.show()
-
+# function to perform cfl analysis
 def cflAnal(u,v,tIt):
     # applying cfl criteria
     dt1=[]
     for i in range(1,ny):
         for j in range(1,nx):
             dt1.append(abs((Re/2)*((1/(dx[i]**2))+(1/(r*r*dy[j]**2)))**(-1)))
-    if tIt==0:
-        return(min(dt1))
-    else:
-        dt2=[]
-        for i in range(1,ny):
-            for j in range(1,nx):
-                dt2.append(abs((u[i,j]/dx[i] + v[i,j]/dy[j])**(-1)))
-        return(0.99*min(min(dt1),min(dt2)))
-    # return(0.001)
+    dt2=[]
+    for i in range(1,ny):
+        for j in range(1,nx):
+            dt2.append(abs((u[i,j]/dx[i] + v[i,j]/dy[j])**(-1)))
+    return(0.99*min(min(dt1),min(dt2)))
 
+# function to initialize psi,w,u,v
 def initialize():
     return(zeros((nx+1,ny+1)),zeros((nx+1,ny+1)),zeros((nx+1,ny+1)),zeros((nx+1,ny+1)))
 
+# function to apply the boundary conditions
 def bcsApply(wMat,psiMat,u,v):
     # applying bc on omega
     for j in range(ny+1):
@@ -46,6 +38,7 @@ def bcsApply(wMat,psiMat,u,v):
     psiMat[:,ny]=0   # top wall
     return(wMat,psiMat)
 
+# main function performing the transient analysis 
 def calculation():
     a,b,u,v = initialize()
     u[0,:]=1  #  top layer with vel = U
@@ -54,6 +47,7 @@ def calculation():
 
     tItMax=10000
     tIt=0
+    timeSteps = []
     while tIt<tItMax:
         # find in the velocities u,v from psiMat
         for i in range(1,ny):
@@ -63,6 +57,7 @@ def calculation():
         # print("\nu",u,"\nv",v)
 
         dt = cflAnal(u,v,tIt)
+        timeSteps.append(dt)
         print("\ntime step : ",dt)
         # calculation of wMat at time n+1
         for i in range(1,nx):
@@ -97,12 +92,14 @@ def calculation():
                           + ((1/(r**2))*2*(dy[i-1]*psiMat[i,j+1]+dy[i]*psiMat[i,j-1]-(dy[i]+dy[i-1])*psiMat[i,j])/ddy)
 
             if abs(res1)<(10**(-6)):
-                break
                 print("Iteration finished")
+                break
 
             pIt=pIt+1 # counter for psiMat Iterations
         print("\npsiMat at ",tIt," step ",psiMat)
-
+        if sum(timeSteps)>=time:
+            print("Reached the time ",sum(timeSteps))
+            break
         tIt=tIt+1 # counter for time steps
 
         # time varying contour plot
@@ -113,19 +110,21 @@ def calculation():
         cs.changed()
         plt.pause(0.0001)
         plt.clf()
+        print("\n U \n",u)
+        print("\n V \n",v)
+        #
+        # if condition:
+        #     break
 
-
-nx=50  # elements in x dir
-ny=50  # elements in y dir
+# users input params
+nx=10  # elements in x dir
+ny=10  # elements in y dir
 U = 1  # mormalized plate velocity
 Re = 100 # reynolds number
 r = 1 # aspect ratio
-
+time = 1
 x,y=grid(nx,ny,3)   # accepts (nx, ny, stretching param)
 dx=spacing(x)  # grid divisions, symmetric
 dy=spacing(y)  # grid divisions, symmetric
-# print(dx)
 # gridPlot(x,y)     # plot the grid
-# dx,dy=uGrid(nx,ny)  # for non uniform grid
-
 calculation()
