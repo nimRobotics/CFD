@@ -38,7 +38,7 @@ def bcsApply(wMat,psiMat,u,v):
     psiMat[:,ny]=0   # top wall
     return(wMat,psiMat)
 
-# main function performing the transient analysis 
+# main function performing the transient analysis
 def calculation():
     a,b,u,v = initialize()
     u[0,:]=1  #  top layer with vel = U
@@ -72,8 +72,7 @@ def calculation():
                 # print(LHS)
         print("\nwMat at time ",tIt," step ",wMat)
 
-        # calculation of psiMat at time n+1
-        # Iteration for psiMat
+        # calculation of psiMat at time n+1 using Iteration
         pItMax=1000
         pIt=0
         while pIt<pItMax:
@@ -97,6 +96,7 @@ def calculation():
 
             pIt=pIt+1 # counter for psiMat Iterations
         print("\npsiMat at ",tIt," step ",psiMat)
+
         if sum(timeSteps)>=time:
             print("Reached the time ",sum(timeSteps))
             break
@@ -104,7 +104,7 @@ def calculation():
 
         # time varying contour plot
         plt.ion()
-        cs = plt.contourf(flipud(psiMat),  extend='both')
+        cs = plt.contour(flipud(psiMat),10,  extend='both')
         cs.cmap.set_over('red')
         cs.cmap.set_under('blue')
         cs.changed()
@@ -112,17 +112,14 @@ def calculation():
         plt.clf()
         print("\n U \n",u)
         print("\n V \n",v)
-        #
-        # if condition:
-        #     break
 
 # users input params
-nx=10  # elements in x dir
-ny=10  # elements in y dir
+nx=100  # elements in x dir
+ny=100  # elements in y dir
 U = 1  # mormalized plate velocity
-Re = 100 # reynolds number
+Re = 10 # reynolds number
 r = 1 # aspect ratio
-time = 1
+time = 4
 x,y=grid(nx,ny,3)   # accepts (nx, ny, stretching param)
 dx=spacing(x)  # grid divisions, symmetric
 dy=spacing(y)  # grid divisions, symmetric

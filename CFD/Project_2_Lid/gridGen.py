@@ -67,5 +67,5 @@ def uGrid(nx,ny):
 # print(grid(10,10,3))
 # # NOTE: call from any program using
 # # from gridGen import grid,gridPlot
-# # x,y=grid(10,10,3)   # accepts (nx, ny, game)
-# gridPlot(grid(10,10,1)[0],grid(10,10,1)[1])
+# x,y=grid(10,10,3)   # accepts (nx, ny, game)
+# gridPlot(grid(10,10,3)[0],grid(10,10,3)[1])

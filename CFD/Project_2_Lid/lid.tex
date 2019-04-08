@@ -75,15 +75,56 @@ Vorticity relation
 \end{equation}
 % \notag
 
-Where, k is the Boltzmann constant, e is the electronic charge and the constant $L_0$ is  known as the Lorenz number.
-For over 150 years, the Wiedemann Franz law has proven to be stable amongst the multitude of metallic systems that have been studied. 
-But recent experiments over a couple of decades show that there are several limitations to the law, the value of Lorenz number L is not same for every materials and the law does not hold for intermediate temperatures. Experiments have shown that the value of Lorenz number, $L$, while roughly constant, is not exactly the same for all materials. 
- \citep{Bristol,2017Sci...355..371L} 
+For the sake of contnuity we will drop the subscript from the $\omega_z$ herafter.
 
-\section{Courant–Friedrichs–Lewy anakysis}
-In mathematics, the Courant–Friedrichs–Lewy (CFL) condition is a necessary condition for convergence while solving certain partial differential equations (usually hyperbolic PDEs) numerically. It arises in the numerical analysis of explicit time integration schemes, when these are used for the numerical solution. As a consequence, the time step must be less than a certain time in many explicit time-marching computer simulations, otherwise the simulation produces incorrect results. The condition is named after Richard Courant, Kurt Friedrichs, and Hans Lewy who described it in their 1928 paper.
- We have the 
+\section{Courant–Friedrichs–Lewy analysis}
+In mathematics, the Courant–Friedrichs–Lewy (CFL) condition is a necessary condition for convergence while solving certain partial differential equations (usually hyperbolic PDEs) numerically. It arises in the numerical analysis of explicit time integration schemes, when these are used for the numerical solution. As a consequence, the time step must be less than a certain time in many explicit time-marching computer simulations, otherwise the simulation produces incorrect results. The condition is named after Richard Courant, Kurt Friedrichs, and Hans Lewy who described it in their 1928 paper \citep{cfl}.
+ We have the equation as 
 
+\begin{equation}
+\frac{\partial \omega}{\partial t} + u\frac{\partial \omega}{\partial x} + v\frac{\partial \omega}{\partial y}= \nu \left [ \frac{\partial^2 \omega}{\partial x^2} +  \frac{\partial^2 \omega}{\partial y^2} \right ]
+\end{equation}
+
+We shall now use the Fourier wave form to bring out the required conditions. The amplification is easily identified using the Fourier wave form, moreover the waveform remains preserved. 
+\begin{equation}
+\omega = \sum_m A^n (t) e^{\hat{i}(k_m x+k_n y)}
+\end{equation}
+Here we can assume the wavenumber of the wave in both $x$ and $y$ direction to be same i.e. $k_n=k_m$ 
+\begin{equation}
+\omega =  A^n e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
+\end{equation}
+
+\begin{subequations}
+\begin{equation}
+\omega_{i,j}^{n} =  A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i,j}^{n+1} =  A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i+1,j}^n =  A^n e^{\hat{i}((i+1)k_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i-1,j}^n =  A^n e^{\hat{i}((i-1)k_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i,j+1}^n =  A^n e^{\hat{i}(ik_m \Delta x+(j+1)k_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i,j-1}^n =  A^n e^{\hat{i}(ik_m \Delta x+(j-1)k_n\Delta y)}
+\end{equation}
+\end{subequations}
+
+Substituting this in our main equation as described above  and simplification results in
+
+
+%\begin{equation}
+%\frac{ A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}- A^n e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}}{\Delta t}  + u\frac{ A^n e^{\hat{i}((i+1)k_m \Delta x+jk_n\Delta y)}- A^n e^{\hat{i}((i-1)k_m \Delta x+jk_n\Delta y)}}{2\Delta x} + v\frac{ A^n e^{\hat{i}(ik_m \Delta x+(j+1)k_n\Delta y)}- A^n e^{\hat{i}((i-1)k_m \Delta x+(j-1)k_n\Delta y)}}{2\Delta y}
+%\end{equation} 
+%\begin{multline*}
+%\frac{ A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}- A^n e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}}{\Delta t}  + u\frac{ A^n e^{\hat{i}((i+1)k_m \Delta x+jk_n\Delta y)}- A^n e^{\hat{i}((i-1)k_m \Delta x+jk_n\Delta y)}}{2\Delta x} +\\ 
+%v\frac{ A^n e^{\hat{i}(ik_m \Delta x+(j+1)k_n\Delta y)}- A^n e^{\hat{i}((i-1)k_m \Delta x+(j-1)k_n\Delta y)}}{2\Delta y} = \nu
+%\end{multline*}
 \section{Initial Conditions and Boundary Conditions}
 
 At time $t=0$ everything is at rest and hence all the values are zero. At the moment $t \geq0$ the lid will be moving at speed $u=U$, which will try to set the fluidin motion. We have the following boundary conditions for $t\geq0$ :
