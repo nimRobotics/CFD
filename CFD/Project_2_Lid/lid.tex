@@ -79,13 +79,13 @@ For the sake of contnuity we will drop the subscript from the $\omega_z$ herafte
 
 \section{Courant–Friedrichs–Lewy analysis}
 In mathematics, the Courant–Friedrichs–Lewy (CFL) condition is a necessary condition for convergence while solving certain partial differential equations (usually hyperbolic PDEs) numerically. It arises in the numerical analysis of explicit time integration schemes, when these are used for the numerical solution. As a consequence, the time step must be less than a certain time in many explicit time-marching computer simulations, otherwise the simulation produces incorrect results. The condition is named after Richard Courant, Kurt Friedrichs, and Hans Lewy who described it in their 1928 paper \citep{cfl}.
- We have the equation as 
+We have the non dimentionalized strealine vorticity formulation equation as
 
 \begin{equation}
-\frac{\partial \omega}{\partial t} + u\frac{\partial \omega}{\partial x} + v\frac{\partial \omega}{\partial y}= \nu \left [ \frac{\partial^2 \omega}{\partial x^2} +  \frac{\partial^2 \omega}{\partial y^2} \right ]
+\frac{\partial \hat{\omega}}{\partial \hat{t}} + \hat{u}\frac{\partial \hat{\omega}}{\partial \hat{x}} +\hat{ v}\frac{\partial \hat{\omega}}{\partial \hat{y}}= \frac{1}{Re} \left [ \frac{\partial^2 \hat{\omega}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\omega}}{\partial \hat{y}^2} \right ]
 \end{equation}
 
-We shall now use the Fourier wave form to bring out the required conditions. The amplification is easily identified using the Fourier wave form, moreover the waveform remains preserved. 
+In the analysis that follows we have dropped the hat symbol i.e. $\hat{}$ for non-dimensionalised quantities. We shall now use the Fourier wave form to bring out the required conditions. The amplification is easily identified using the Fourier wave form, moreover the waveform remains preserved. 
 \begin{equation}
 \omega = \sum_m A^n (t) e^{\hat{i}(k_m x+k_n y)}
 \end{equation}
@@ -93,10 +93,9 @@ Here we can assume the wavenumber of the wave in both $x$ and $y$ direction to b
 \begin{equation}
 \omega =  A^n e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
 \end{equation}
-
 \begin{subequations}
 \begin{equation}
-\omega_{i,j}^{n} =  A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
+\omega_{i,j}^{n} =  A^{n} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
 \end{equation}
 \begin{equation}
 \omega_{i,j}^{n+1} =  A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
@@ -115,16 +114,36 @@ Here we can assume the wavenumber of the wave in both $x$ and $y$ direction to b
 \end{equation}
 \end{subequations}
 
-Substituting this in our main equation as described above  and simplification results in
+Substituting this in our main equation after its discretization and simplification results in
+% cfl only for linear equation? hyperbolic?
+\begin{multline*}\frac{\frac{A^{n+1}}{A^n}-1}{\Delta t} + u\left(\frac{e^{ik_m \Delta x}-e^{-ik_m \Delta x}}{2\Delta x}\right)+v\left(\frac{e^{ik_n \Delta y}-e^{-ik_n \Delta y}}{2\Delta y}\right) \\= \frac{1}{Re}\left[ \left(\frac{e^{ik_m \Delta x}-2+e^{-ik_m \Delta x}}{\Delta x^2}\right) +\frac{1}{r^2}\left(\frac{e^{ik_n \Delta y}-2+e^{-ik_n \Delta y}}{\Delta y^2}\right)\right]
+\end{multline*}
+Let $\theta _1= k_m \Delta x$ and $\theta _2= k_n \Delta y$, in order to simplyfy the analysis we can choose the $k_i$'s such that $\theta _1=\theta _2 =\theta$. We can use the below identity on the obtained equation.
+
+\begin{equation}
+e^{i\theta} = cos \theta +isin \theta
+\end{equation}
+
+Hence we can obtain the amplification factor $G$ as 
+\begin{equation}
+G = \frac{A^{n+1}}{A^n} = 1-\frac{1}{Re}\left(\frac{4\Delta t }{\Delta x^2}+\frac{4\Delta t}{\Delta y^2}\right)\left(\frac{1-cos\theta}{2}\right) - i\left(\frac{u\Delta t}{\Delta x}+\frac{v\Delta t }{\Delta y}\right)sin\theta
+\end{equation}
+
+This equation can be re-written in terms of $\alpha$ and $\beta$ as
+ \begin{equation}
+G = 1-\alpha \left(\frac{1-cos\theta}{2} \right)+i\beta sin\theta
+\end{equation}
+
+ \begin{equation}
+|G|^2 = 1+\frac{\alpha^2}{4} (1-q)^2+\beta^2 (1-q^2) -\alpha (1-q)
+\end{equation}
+where, $q=cos\theta$. For the scheme to be stable, amplification factor $|G| \leq 1$ or $|G|^2 \leq 1$. We define a polinomial in terms of q as 
+ \begin{equation}
+p(q)= \frac{\alpha^2}{4} (1-q)^2+\beta^2 (1-q^2) -\alpha (1-q)  \leq 0
+\end{equation}
 
 
-%\begin{equation}
-%\frac{ A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}- A^n e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}}{\Delta t}  + u\frac{ A^n e^{\hat{i}((i+1)k_m \Delta x+jk_n\Delta y)}- A^n e^{\hat{i}((i-1)k_m \Delta x+jk_n\Delta y)}}{2\Delta x} + v\frac{ A^n e^{\hat{i}(ik_m \Delta x+(j+1)k_n\Delta y)}- A^n e^{\hat{i}((i-1)k_m \Delta x+(j-1)k_n\Delta y)}}{2\Delta y}
-%\end{equation} 
-%\begin{multline*}
-%\frac{ A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}- A^n e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}}{\Delta t}  + u\frac{ A^n e^{\hat{i}((i+1)k_m \Delta x+jk_n\Delta y)}- A^n e^{\hat{i}((i-1)k_m \Delta x+jk_n\Delta y)}}{2\Delta x} +\\ 
-%v\frac{ A^n e^{\hat{i}(ik_m \Delta x+(j+1)k_n\Delta y)}- A^n e^{\hat{i}((i-1)k_m \Delta x+(j-1)k_n\Delta y)}}{2\Delta y} = \nu
-%\end{multline*}
+
 \section{Initial Conditions and Boundary Conditions}
 
 At time $t=0$ everything is at rest and hence all the values are zero. At the moment $t \geq0$ the lid will be moving at speed $u=U$, which will try to set the fluidin motion. We have the following boundary conditions for $t\geq0$ :

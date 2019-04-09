@@ -99,27 +99,31 @@ def calculation():
 
         if sum(timeSteps)>=time:
             print("Reached the time ",sum(timeSteps))
+            y=[]
+            for i in range(nx):
+                y.append(y[len(y)-1]+dy[i])
+            plt.plot(u[32,:],y)
             break
         tIt=tIt+1 # counter for time steps
 
-        # time varying contour plot
-        plt.ion()
-        cs = plt.contour(flipud(psiMat),10,  extend='both')
-        cs.cmap.set_over('red')
-        cs.cmap.set_under('blue')
-        cs.changed()
-        plt.pause(0.0001)
-        plt.clf()
+        # # time varying contour plot
+        # plt.ion()
+        # cs = plt.contour(flipud(psiMat),10,  extend='both')
+        # cs.cmap.set_over('red')
+        # cs.cmap.set_under('blue')
+        # cs.changed()
+        # plt.pause(0.0001)
+        # plt.clf()
         print("\n U \n",u)
         print("\n V \n",v)
 
 # users input params
-nx=100  # elements in x dir
-ny=100  # elements in y dir
+nx=64  # grids in x dir
+ny=64  # grids in y dir
 U = 1  # mormalized plate velocity
 Re = 10 # reynolds number
 r = 1 # aspect ratio
-time = 4
+time = 0.5
 x,y=grid(nx,ny,3)   # accepts (nx, ny, stretching param)
 dx=spacing(x)  # grid divisions, symmetric
 dy=spacing(y)  # grid divisions, symmetric
