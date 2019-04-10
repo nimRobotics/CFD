@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{authblk}
 \usepackage{natbib}
+\usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{mathtools}                 % http://ctan.org/pkg/mathtools
 \usepackage{amsmath}
@@ -15,8 +16,8 @@
 \renewcommand{\arraystretch}{1.5}
 
 \title{\textbf{Analysis of 2-D Lid-Driven Cavity Problem}}
-\author[1]{\textbf{Aakash Yadav}}
-\affil[1]{\textbf{Indian Institute of Technology, Tirupati}}
+\author{Aakash Yadav\\ Email: \href{mailto:me16b001@iittp.ac.in}{me16b001@iittp.ac.in}}
+\affil{\textbf{Indian Institute of Technology Tirupati}}
 \date{\textbf{April 2019}}
 \geometry{a4paper, portrait, margin=1in}
 
@@ -27,8 +28,21 @@
 \line(1,0){250}
 \end{center}
 
+\begin{abstract}
+The lid driven cavity problem is a very standard problem in domain of Computational Fluid Dynamics and is being used as a benchmark problem in CFD. The problem although appears to be simple , holds an ample opportunity for one to explore and has endless strings  attached to it.  The ultimate goal of this paper is to gain insight of some of the physics that is powering the modern CFD packages. In the current work, we present our analysis for both the steady  and unsteady states. We have used the derived variable approach for carrying out the analysis. For the steady state solutions, uniform grid has been used while for the unsteady state we have inplemented the non-uniform grid in order to capture the dynamics of the problem more accurately where the velocity gradients are very high. 
+Accurate results inline with results obtained by Ghia et al \citep{ghia} have been obtained.
+This paper also presents the methodolgy for Von-Neumann stability analysis in great depth. 
+\end{abstract}
+
 \section{Introduction}
 % literature review regarding the usage of this problem
+This problem has been solved by large numbers of people in the past by using different methodologies and schemes starting from 1966 by Burggraf \citep{burger}, yet it is an active area of research even in the present. Tamer et al \citep{tamer} provides a summary of all the work that has been done from 1966 till 2014 in very concise tabular format in chronological order.
+The problem have been simulated upto Reynolds number, $Re=15000$ by Bruneau et al \citep{bruneau} in their 1990s paper by using a finite difference approach. It can be observed that Finite Difference scheme has been heavily adopted in the past for carrying out the analysis. In present work we have used the Finite Difference scheme for the unsteady state analysis while upwind scheme \citep{courant} (both first and second order) for the steady state analysis.
+
+In this work, we have analyzed the unsteady, viscous, incompressible, isothermal, two-dimensional, laminar flow of Newtonian fluid taking place in the cavity, driven by lid of infinite length (Figure ~\ref{fig:cavityFig}). 
+This problem is solved using an in-house Python code developed by the author (\href{https://github.com/AakashSYadav/LidDrivenCavityProblem}{https://github.com/AakashSYa dav/LidDrivenCavityProblem }), which solves both unsteady and steady  Navier-Stokes equations using derived variable apporach, using the Finite Difference Method (FDM).
+
+The geometery of the problem is quite simple, it consists of a rectangular cavity ABCD in the $x-y$ plane with dimensions as shown in the Figure ~\ref{fig:cavityFig}, where the walls AB, CD, and AD are rigid walls, whereas BC is open. The cavity is of length, $D$ in the $x$-direction and height, $H$ in the y direction. The aspect ratio is defined as $r=H/D$. The Reynolds number is defined based on the velocity scale, $U$ and the length scale, $D$. Acceleration due to gravity acts in the negative $z$ direction. The top of the cavity, BC, is covered with an infinitely-long rigid lid. Initially $(t \leq 0)$, the fluid inside the cavity is at rest. At time $t > 0$, the lid is set in motion to the right with a constant velocity $U $. 
 
 \begin{figure}[h!]
 \centering
@@ -37,116 +51,72 @@
 \label{fig:cavityFig}
 \end{figure}
 
-In this project, we will analyze the unsteady, viscous, incompressible,isothermal, two-dimensional, laminar flow of Newtonian fluid in a cavity covered with a lid. Consider a rectangular cavity ABCD of dimensions shown in Figure ~\ref{fig:cavityFig}. AB, CD, and AD are rigid walls, whereas BC is open. The cavity is of length $D$ and width $H$ , in the x-y plane, as shown in Figure 1.1. The aspect ratio is defined as $R=H/D$. The Reynolds number is defined based on the velocity scale $U$ and the length scale $D$. Acceleration due to gravity acts in the negative-z direction. The top of the cavity, BC, is covered with an infinitely-long rigid lid. Initially $(t \leq 0)$, the fluid inside the cavity is at rest. At time $t > 0$, the lid is set in motion to the right with a constant velocity $U $. You are to analyze the fluid flow inside the cavity for various conditions using proper governing equations, boundary conditions, initial conditions, and numerical schemes.
-%
-%In section 2, we bring out the corrections to the Wiedemann Franz law and form a generalised law. We further see how the corrective function varies with scattering parameter, $r$ and reduced chemical potential, $\mu^*$.
-%In section 3,  we extremize the expression in form of the polylogarithmic functions for the thermal conductvity with respect to both reduced chemical potential, $\mu^*$ and temperature. We also present the mathematical approach to reduce the phonon thermal conductivity.
-%Section 4 will provide an insight to mathematical form obtained by extremising the electrical conductivity with respect to temperature.
-%In the final section we present the conclusions. 
+In section 2, we bring equtions governing the fluid flow in the appropriate form, the section that follows provides insights to boundary and initial conditions that are exisitng for this problem, and which can be used in solving the problem numerically. In section 4 and 5 we non-dimensionalise the governing equations and carry out their discretization in the later. Section 6, is the most important part of this paper which gives insight of the algorithm(s) used in this work. In the final section we present the conclusions. All the algorithms implemented in this work can be found in the appendix.
 
 \section{Governing Equations}
-The Wiedemann Franz Law (1853) states that the ratio of the electronic contribution of the thermal conductivity $\kappa$ to the electrical conductivity $\sigma$ of a metal is proportional to the temperature $ T $ . \citep{Ashcroft}
-
-Continuity equation for 2-D incompressible isothermal flow
+The equation of continuity for 2-D incompressible isothermal flow  \citep{Pedlosky, anderson1995computational} is given by the equation
 \begin{equation}
 \label{eqn:continuityEqn}
 \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} = 0  
 \end{equation}
+where $u$ and $v$ are the components of veloity in $x$ and $y$ directions respectively. Furthermore we have the stream function, $\psi$ defined as
 
-Stream function 
+\begin{subequations}
+\begin{equation}
+\label{eqn:p1}
+u = \frac{d\psi}{dy} 
+\end{equation}
+\begin{equation}
+\label{eqn:p2}
+v = -\frac{d\psi}{dx}
+\end{equation}
+\end{subequations}
+
+The vorticity equation of fluid dynamics describes evolution of the vorticity $\omega$ of fluid as it moves with its flow, i.e. the local rotation of the fluid. Mathematically vorticity is the curl of the flow velocity.
+\begin{subequations}
+\begin{equation}
+\label{eqn:w1}
+\vec{\omega}^{\,} = \vec{\nabla}^{\,} \times \vec{V}^{\,}
+\end{equation}
+\begin{equation}
+\label{eqn:w2}
+\vec{\omega}^{\,} = (v_x - u_y)\hat{k}
+\end{equation}
 \begin{equation}
 \label{eqn:streamFnEqn}
-\omega = -\left[\frac{\partial^2 \psi}{\partial x^2} +  \frac{\partial^2 \psi}{\partial y^2}\right]=-\nabla^2 \psi
+\vec{\omega}^{\,} = -\left[\frac{\partial^2 \psi}{\partial x^2} +  \frac{\partial^2 \psi}{\partial y^2}\right]=-\nabla^2 \psi
 \end{equation}
+\end{subequations}
+Equation  ~\ref{eqn:streamFnEqn} can be obtained by combining equations ~\ref{eqn:p1}, ~\ref{eqn:p2} and \ref{eqn:w2}.
 
-Navier-Stokes equations
+Navier-Stokes equations which follows are perhaps the most important equations in the field of Fluid Dynamics. These equations are essentially the momentum conservation equations for isothermal, Newtonian and incopressible fluid. This can also be seen as application of Isaac Newton's second law to fluid motion.
+\begin{subequations}
 \begin{equation}
+\label{eqn:ns1}
 \frac{\partial u}{\partial t} + u\frac{\partial u}{\partial x} + v\frac{\partial u}{\partial y}= -\frac{1}{\rho}\frac{\partial P}{\partial x} + g_x + \nu \left [ \frac{\partial^2 u}{\partial x^2} +  \frac{\partial^2 u}{\partial y^2} \right ]
 \end{equation}
 
 \begin{equation}
+\label{eqn:ns2}
 \frac{\partial v}{\partial t} + u\frac{\partial v}{\partial x} + v\frac{\partial v}{\partial y}= -\frac{1}{\rho}\frac{\partial P}{\partial y} + g_y + \nu \left [ \frac{\partial^2 v}{\partial x^2} +  \frac{\partial^2 v}{\partial y^2} \right ]
 \end{equation}
+\end{subequations}
 
-Vorticity relation 
+Equations ~\ref{eqn:ns1} and ~\ref{eqn:ns2} are for the fluid flow along the $x$ and $y$ direction respectively.  One may observe that these equations also comprises of the pressure term $P$, which may not be required in some of the cases. We can eliminate the pressure term $P$ in order to reduce the number of variable and simplify the anylysis by computing $\frac{\partial (~\ref{eqn:ns1})}{\partial y} - \frac{\partial (~\ref{eqn:ns2})}{\partial x} $ , thus resulting in the below equation know as vorticity relation. This technique of approaching the problem is known as derived variable apporach. 
 \begin{equation}
 \label{eqn:vorticityFnEqn}
 \frac{\partial \omega_z}{\partial t} + u\frac{\partial \omega_z}{\partial x} + v\frac{\partial \omega_z}{\partial y}= \nu \left [ \frac{\partial^2 \omega_z}{\partial x^2} +  \frac{\partial^2 \omega_z}{\partial y^2} \right ]
 \end{equation}
 % \notag
 
-For the sake of contnuity we will drop the subscript from the $\omega_z$ herafter.
+For the sake of convienance we will drop the subscript from the $\omega_z$ hereafter.
 
-\section{Courant–Friedrichs–Lewy analysis}
-In mathematics, the Courant–Friedrichs–Lewy (CFL) condition is a necessary condition for convergence while solving certain partial differential equations (usually hyperbolic PDEs) numerically. It arises in the numerical analysis of explicit time integration schemes, when these are used for the numerical solution. As a consequence, the time step must be less than a certain time in many explicit time-marching computer simulations, otherwise the simulation produces incorrect results. The condition is named after Richard Courant, Kurt Friedrichs, and Hans Lewy who described it in their 1928 paper \citep{cfl}.
-We have the non dimentionalized strealine vorticity formulation equation as
-
-\begin{equation}
-\frac{\partial \hat{\omega}}{\partial \hat{t}} + \hat{u}\frac{\partial \hat{\omega}}{\partial \hat{x}} +\hat{ v}\frac{\partial \hat{\omega}}{\partial \hat{y}}= \frac{1}{Re} \left [ \frac{\partial^2 \hat{\omega}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\omega}}{\partial \hat{y}^2} \right ]
-\end{equation}
-
-In the analysis that follows we have dropped the hat symbol i.e. $\hat{}$ for non-dimensionalised quantities. We shall now use the Fourier wave form to bring out the required conditions. The amplification is easily identified using the Fourier wave form, moreover the waveform remains preserved. 
-\begin{equation}
-\omega = \sum_m A^n (t) e^{\hat{i}(k_m x+k_n y)}
-\end{equation}
-Here we can assume the wavenumber of the wave in both $x$ and $y$ direction to be same i.e. $k_n=k_m$ 
-\begin{equation}
-\omega =  A^n e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
-\end{equation}
-\begin{subequations}
-\begin{equation}
-\omega_{i,j}^{n} =  A^{n} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
-\end{equation}
-\begin{equation}
-\omega_{i,j}^{n+1} =  A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
-\end{equation}
-\begin{equation}
-\omega_{i+1,j}^n =  A^n e^{\hat{i}((i+1)k_m \Delta x+jk_n\Delta y)}
-\end{equation}
-\begin{equation}
-\omega_{i-1,j}^n =  A^n e^{\hat{i}((i-1)k_m \Delta x+jk_n\Delta y)}
-\end{equation}
-\begin{equation}
-\omega_{i,j+1}^n =  A^n e^{\hat{i}(ik_m \Delta x+(j+1)k_n\Delta y)}
-\end{equation}
-\begin{equation}
-\omega_{i,j-1}^n =  A^n e^{\hat{i}(ik_m \Delta x+(j-1)k_n\Delta y)}
-\end{equation}
-\end{subequations}
-
-Substituting this in our main equation after its discretization and simplification results in
-% cfl only for linear equation? hyperbolic?
-\begin{multline*}\frac{\frac{A^{n+1}}{A^n}-1}{\Delta t} + u\left(\frac{e^{ik_m \Delta x}-e^{-ik_m \Delta x}}{2\Delta x}\right)+v\left(\frac{e^{ik_n \Delta y}-e^{-ik_n \Delta y}}{2\Delta y}\right) \\= \frac{1}{Re}\left[ \left(\frac{e^{ik_m \Delta x}-2+e^{-ik_m \Delta x}}{\Delta x^2}\right) +\frac{1}{r^2}\left(\frac{e^{ik_n \Delta y}-2+e^{-ik_n \Delta y}}{\Delta y^2}\right)\right]
-\end{multline*}
-Let $\theta _1= k_m \Delta x$ and $\theta _2= k_n \Delta y$, in order to simplyfy the analysis we can choose the $k_i$'s such that $\theta _1=\theta _2 =\theta$. We can use the below identity on the obtained equation.
-
-\begin{equation}
-e^{i\theta} = cos \theta +isin \theta
-\end{equation}
-
-Hence we can obtain the amplification factor $G$ as 
-\begin{equation}
-G = \frac{A^{n+1}}{A^n} = 1-\frac{1}{Re}\left(\frac{4\Delta t }{\Delta x^2}+\frac{4\Delta t}{\Delta y^2}\right)\left(\frac{1-cos\theta}{2}\right) - i\left(\frac{u\Delta t}{\Delta x}+\frac{v\Delta t }{\Delta y}\right)sin\theta
-\end{equation}
-
-This equation can be re-written in terms of $\alpha$ and $\beta$ as
- \begin{equation}
-G = 1-\alpha \left(\frac{1-cos\theta}{2} \right)+i\beta sin\theta
-\end{equation}
-
- \begin{equation}
-|G|^2 = 1+\frac{\alpha^2}{4} (1-q)^2+\beta^2 (1-q^2) -\alpha (1-q)
-\end{equation}
-where, $q=cos\theta$. For the scheme to be stable, amplification factor $|G| \leq 1$ or $|G|^2 \leq 1$. We define a polinomial in terms of q as 
- \begin{equation}
-p(q)= \frac{\alpha^2}{4} (1-q)^2+\beta^2 (1-q^2) -\alpha (1-q)  \leq 0
-\end{equation}
 
 
 
 \section{Initial Conditions and Boundary Conditions}
 
-At time $t=0$ everything is at rest and hence all the values are zero. At the moment $t \geq0$ the lid will be moving at speed $u=U$, which will try to set the fluidin motion. We have the following boundary conditions for $t\geq0$ :
+At time $t=0$ everything is at rest and hence all the values are zero. At the moment $t \geq0$ the lid will be moving at speed $u=U$, which will try to set the fluid in motion. We have the following boundary conditions for $t\geq0$ :
 \\*
 No slip condition will result in zero velocity along the wall tangent
 \begin{subequations}
@@ -340,6 +310,110 @@ Von-Neutmann stability analysis for the above equation -
 
 
 The Fermi-Dirac integrals play very improtant role in the study of semiconductors appear frequently in semiconductor problems. It is thus a topic of special interest among physicist working in this field.
+
+\section{Courant–Friedrichs–Lewy analysis}
+In mathematics, the Courant–Friedrichs–Lewy (CFL) condition is a necessary condition for convergence while solving certain partial differential equations (usually hyperbolic PDEs) numerically. It arises in the numerical analysis of explicit time integration schemes, when these are used for the numerical solution. As a consequence, the time step must be less than a certain time in many explicit time-marching computer simulations, otherwise the simulation produces incorrect results. The condition is named after Richard Courant, Kurt Friedrichs, and Hans Lewy who described it in their 1928 paper \citep{cfl}.
+We have the non dimentionalized strealine vorticity formulation equation as
+
+\begin{equation}
+\frac{\partial \hat{\omega}}{\partial \hat{t}} + \hat{u}\frac{\partial \hat{\omega}}{\partial \hat{x}} +\hat{ v}\frac{\partial \hat{\omega}}{\partial \hat{y}}= \frac{1}{Re} \left [ \frac{\partial^2 \hat{\omega}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\omega}}{\partial \hat{y}^2} \right ]
+\end{equation}
+
+In the analysis that follows we have dropped the hat symbol i.e. $\hat{}$ for non-dimensionalised quantities. We shall now use the Fourier wave form to bring out the required conditions. The amplification is easily identified using the Fourier wave form, moreover the waveform remains preserved. 
+\begin{equation}
+\omega = \sum_m A^n (t) e^{\hat{i}(k_m x+k_n y)}
+\end{equation}
+Here we can assume the wavenumber of the wave in both $x$ and $y$ direction to be same i.e. $k_n=k_m$ 
+\begin{equation}
+\omega =  A^n e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{subequations}
+\begin{equation}
+\omega_{i,j}^{n} =  A^{n} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i,j}^{n+1} =  A^{n+1} e^{\hat{i}(ik_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i+1,j}^n =  A^n e^{\hat{i}((i+1)k_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i-1,j}^n =  A^n e^{\hat{i}((i-1)k_m \Delta x+jk_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i,j+1}^n =  A^n e^{\hat{i}(ik_m \Delta x+(j+1)k_n\Delta y)}
+\end{equation}
+\begin{equation}
+\omega_{i,j-1}^n =  A^n e^{\hat{i}(ik_m \Delta x+(j-1)k_n\Delta y)}
+\end{equation}
+\end{subequations}
+
+Substituting this in our main equation after its discretization and simplification results in
+% cfl only for linear equation? hyperbolic?
+\begin{multline*}\frac{\frac{A^{n+1}}{A^n}-1}{\Delta t} + u\left(\frac{e^{ik_m \Delta x}-e^{-ik_m \Delta x}}{2\Delta x}\right)+v\left(\frac{e^{ik_n \Delta y}-e^{-ik_n \Delta y}}{2\Delta y}\right) \\= \frac{1}{Re}\left[ \left(\frac{e^{ik_m \Delta x}-2+e^{-ik_m \Delta x}}{\Delta x^2}\right) +\frac{1}{r^2}\left(\frac{e^{ik_n \Delta y}-2+e^{-ik_n \Delta y}}{\Delta y^2}\right)\right]
+\end{multline*}
+Let $\theta _1= k_m \Delta x$ and $\theta _2= k_n \Delta y$, in order to simplyfy the analysis we can choose the $k_i$'s such that $\theta _1=\theta _2 =\theta$. We can use the below identity on the obtained equation.
+
+\begin{equation}
+e^{i\theta} = cos \theta +isin \theta
+\end{equation}
+
+Hence we can obtain the amplification factor $G$ as 
+\begin{equation}
+G = \frac{A^{n+1}}{A^n} = 1-\frac{1}{Re}\left(\frac{4\Delta t }{\Delta x^2}+\frac{4\Delta t}{\Delta y^2}\right)\left(\frac{1-cos\theta}{2}\right) - i\left(\frac{u\Delta t}{\Delta x}+\frac{v\Delta t }{\Delta y}\right)sin\theta
+\end{equation}
+
+This equation can be re-written in terms of $\alpha$ and $\beta$ as
+ \begin{equation}
+G = 1-\alpha \left(\frac{1-cos\theta}{2} \right)+i\beta sin\theta
+\end{equation}
+
+ \begin{equation}
+|G|^2 = 1+\frac{\alpha^2}{4} (1-q)^2+\beta^2 (1-q^2) -\alpha (1-q)
+\end{equation}
+where, 
+\begin{equation}
+q=cos\theta \notag
+\end{equation}
+
+\begin{equation}
+\alpha = \frac{1}{Re}\left[\frac{4\Delta t}{\Delta x^2}+\frac{4\Delta t}{\Delta y^2}\right]  \notag
+\end{equation}
+\begin{equation}
+\beta = \left[\frac{u\Delta t}{\Delta x}+\frac{v\Delta t }{\Delta y}\right]  \notag
+\end{equation} 
+
+
+
+ For the scheme to be stable, amplification factor $|G| \leq 1$ or $|G|^2 \leq 1$. We define a polinomial in terms of q as 
+ \begin{equation}
+p(q)= \frac{\alpha^2}{4} (1-q)^2+\beta^2 (1-q^2) -\alpha (1-q)  \leq 0
+\end{equation}
+ \begin{equation}
+p(q)= \frac{\alpha^2}{4} (1-q)^2+\beta^2 (1-q^2) -\alpha (1-q)  \leq 0
+\end{equation}
+As $q = 1$ is a root of $p(q)$, we can have four types of possible parabolas as shown in Figure ~\ref{fig:para1}. But as $p(q) \leq 0$ the parabolas shown with dotted red line can be rejected. Hence leaving the parabolas in blue, having positive slope i.e. $p^{'}(q)>0$ at $q=1$. Thus at $q=1$ we have  $p^{'}(1)>0$ or  $p^{'}(1) = \alpha- 2\beta^2>0$ which results in the condition
+
+\begin{equation}
+\alpha > 2 \beta^2
+\end{equation}
+Moreover, we also have the condition that $p(-1) \leq 0$ which results in $\alpha \leq 2$. Hence we have $2\beta^2<\alpha \leq 2$.
+Finally, we obtain 
+
+\begin{equation}
+\Delta t \leq \frac{Re}{2}\left[\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2r^2}\right]^{-1}
+\end{equation}
+\begin{equation}
+\Delta t \leq  \left[\frac{u}{\Delta x}+\frac{v}{\Delta y}\right]^{-1}
+\end{equation}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=.5]{par1.png}
+\caption{Possible parabolas passing through $q=1$}
+\label{fig:para1}
+\end{figure}
+
 
 \section{Results}
 % what is the Re at which turbulance starts and fluid shows transition i.e. vorticities

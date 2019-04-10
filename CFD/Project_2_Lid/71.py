@@ -106,14 +106,14 @@ def calculation():
             break
         tIt=tIt+1 # counter for time steps
 
-        # # time varying contour plot
-        # plt.ion()
-        # cs = plt.contour(flipud(psiMat),10,  extend='both')
-        # cs.cmap.set_over('red')
-        # cs.cmap.set_under('blue')
-        # cs.changed()
-        # plt.pause(0.0001)
-        # plt.clf()
+        # time varying contour plot
+        plt.ion()
+        cs = plt.contour(flipud(psiMat),10,  extend='both')
+        cs.cmap.set_over('red')
+        cs.cmap.set_under('blue')
+        cs.changed()
+        plt.pause(0.0001)
+        plt.clf()
         print("\n U \n",u)
         print("\n V \n",v)
 
