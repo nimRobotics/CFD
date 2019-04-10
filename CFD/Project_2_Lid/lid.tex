@@ -150,7 +150,7 @@ v(x,H)=0 \dots \text{ Top wall}
 u(0,y)=0 \dots \text{ Left wall}
 \end{equation}
 \end{subequations}
-
+More discussion of the boundary conditions will be followed in preceding section after their non-dimensionalization.
 
 \section{Non-dimensionalization of the Governing Equations}
 % comment on normalization	
@@ -225,6 +225,17 @@ Deriving the boundary conditions in the form of vorticity and stream function
 \hat{\omega}(1,\hat{y}) = -\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{x}^2}\right)_{\hat{x}=1} \dots \text{Right wall}
 \end{equation}
 \end{subequations}
+We can expand $\psi$ using the Taylor series expansion as 
+\begin{subequations}
+\begin{equation}
+\psi_{2,j} = \psi_{1,j}+\frac{\partial \psi}{\partial x}_{1,j}\Delta x + \frac{\partial^2 \psi}{\partial x^2}_{1,j}\frac{\Delta x}{2!} \dots
+\end{equation}
+\begin{equation}
+\frac{\partial^2 \psi}{\partial x^2}_{1,j} = \frac{2(\psi_{2,j}-\psi_{1,j})}{\partial x^2} + \frac{2v_{1,j}}{\Delta x} +\mathcal{O}(\Delta x) 
+\end{equation}
+\end{subequations}
+Similarly we can obtain the expressions as above for the other walls \citep{salih}.
+
 For the bottom surface $\hat{u}=\hat{v}=0$, substituiting this equation (\ref{eqn:streamFnEqn2}) yields 
 \begin{equation}
 \hat{\psi}_{(\hat{y}=0)} = c_1
@@ -326,24 +337,56 @@ A = 2\left[\frac{\Delta x_{i-1} \omega(x_{i+1}) + \Delta x_{i}\omega(x_{i-1}) - 
 
 \subsection{Discretization for Uniform grid}
 
-In this section we discretize equation for uniform grid to be used in the steady state analysis. We discretize equation \ref{eqn:streamFnEqn3} using forward time and central differencing scheme, the resulting equation in second order accurate in space.
+In this section we discretize equation for uniform grid to be used in the steady state analysis using the upwind scheme. We discretize equation \ref{eqn:streamFnEqn3} using central differencing scheme, the resulting equation in second order accurate in space.
 \begin{equation}
 \frac{\psi_{i+1,j}-2\psi_{i,j}+\psi_{i-1,j} }{(\Delta x)^2} + \frac{1}{r^2}\frac{\psi_{i,j+1}-2\psi_{i,j}+\psi_{i,j-1}}{(\Delta y)^2} = -\omega_{zij}
 \end{equation}
-For discretization of equation \ref{eqn:vorticityEqn2} we drop the temporal derivative terms and discretize using forward time and central differencing scheme, which is also second order space accurate. 
+For discretization of equation \ref{eqn:vorticityEqn2} we drop the temporal derivative terms and discretize using upwind scheme, we have used first order accurate upwind scheme for the nodes one step inside the boundary while second order accurate for all the interior nodes. Moreover from literature it is known that upwind scheme has been more accurate than the downwind scheme. \citep{agarwal}
+\begin{equation}
+u\frac{\partial \omega_z}{\partial x} + v\frac{\partial \omega_z}{\partial y}= \frac{1}{Re} \left [ \frac{\partial^2 \omega_z}{\partial x^2} +  \frac{1}{r^2}\frac{\partial^2 \omega_z}{\partial y^2} \right ]
+\end{equation}
+
 \begin{equation} 
 \begin{split}
-\left[u_{ij}\left(\frac{\omega_{i+1,j}-\omega_{i-1,j}}{2\Delta x}\right) - v_{ij}\left(\frac{\omega_{i,j+1}-\omega_{i,j-1}}{2\Delta y}\right)  \right]
+\left[u_{ij}\frac{\partial \omega_z}{\partial x} + v_{ij}\frac{\partial \omega_z}{\partial y}  \right]
   = \frac{1}{Re}\left[\left(\frac{\omega_{i+1,j}-2\omega_{i,j}+\omega_{i-1,j}}{(\Delta x)^2}\right)+\frac{1}{r^2}\left(\frac{\omega_{i,j+1}-2\omega_{i,j}+\omega_{i,j-1}}{(\Delta y)^2}\right) \right]
 \end{split}
 \end{equation}
+For first order accurate upwind scheme we have
 
+\begin{subequations}
+\begin{equation} 
+\begin{split}
+u_{ij}\frac{\partial \omega}{\partial x}_{ij} = u_{ij}\left[\frac{\omega_{i,j}-\omega_{i-1,j}}{\Delta x}\right] \text{  if  } u_{ij}>0 \\ = u_{ij}\left[\frac{\omega_{i+1,j}-\omega_{i,j}}{\Delta x}\right] \text{  if  } u_{ij}<0
+\end{split}
+\end{equation}
+
+\begin{equation} 
+\begin{split}
+v_{ij}\frac{\partial \omega}{\partial y}_{ij} = v_{ij}\left[\frac{\omega_{i,j}-\omega_{i,j-1}}{\Delta y}\right] \text{  if  } v_{ij}>0 \\ = v_{ij}\left[\frac{\omega_{i,j+1}-\omega_{i,j}}{\Delta y}\right] \text{  if  } v_{ij}<0
+\end{split}
+\end{equation}
+\end{subequations}
+For second order accurate upwind scheme for all the interior nodes (except two outer layers) we have
+\begin{subequations}
+\begin{equation} 
+\begin{split}
+u_{ij}\frac{\partial \omega}{\partial x}_{ij} = u_{ij}\left[\frac{3\omega_{i,j}-4\omega_{i-1,j}+\omega_{i-2,j}}{2\Delta x}\right] \text{  if  } u_{ij}>0 \\ = u_{ij}\left[\frac{-3\omega_{i,j}+4\omega_{i+1,j}-\omega_{i+2,j}}{2\Delta x}\right] \text{  if  } u_{ij}<0
+\end{split}
+\end{equation}
+
+\begin{equation} 
+\begin{split}
+v_{ij}\frac{\partial \omega}{\partial y}_{ij} = v_{ij}\left[\frac{3\omega_{i,j}-4\omega_{i,j-1}+\omega_{i,j-2}}{2\Delta y}\right] \text{  if  } v_{ij}>0 \\ = v_{ij}\left[\frac{-3\omega_{i,j}+4\omega_{i,j+1}-\omega_{i,j+2}}{2\Delta y}\right] \text{  if  } v_{ij}<0
+\end{split}
+\end{equation}
+\end{subequations}
 
 \section{Courant–Friedrichs–Lewy (CFL) analysis}
 This section deals with the stabilty analysis, it is a necessary condition for convergence while solving PDEs numerically. It plays an important role explicit time integration schemes as a consequence, the time step must be less than a certain critical time step, otherwise the simulation blow away. The condition is named after Richard Courant, Kurt Friedrichs, and Hans Lewy who described it in their 1928 paper \citep{cfl}.
 In our case the values of $\Delta x$, $\Delta y$, $u$ and $v$ are varying throughout the domain. Hence for finding the solution at $t+\Delta t$ we need to compute $\Delta t$ such that our computations are stable at each and every node, thus we need to find the grid Courant number is also going to vary for every node, and every time step. 
 
-We have the non dimentionalized strealine vorticity formulation equation as
+We have the non dimentionalized streamline vorticity formulation equation as
 
 \begin{equation}
 \frac{\partial \hat{\omega}}{\partial \hat{t}} + \hat{u}\frac{\partial \hat{\omega}}{\partial \hat{x}} +\hat{ v}\frac{\partial \hat{\omega}}{\partial \hat{y}}= \frac{1}{Re} \left [ \frac{\partial^2 \hat{\omega}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\omega}}{\partial \hat{y}^2} \right ]
