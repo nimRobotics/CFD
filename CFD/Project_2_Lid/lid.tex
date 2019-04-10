@@ -47,13 +47,14 @@ The geometery of the problem is quite simple, it consists of a rectangular cavit
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=.5]{cavityFig.png}
-\caption{scaling of the WF law by $A\left(r,\mu^*\right)$}
+\caption{Lid driven cavity in $x-y$ plane}
 \label{fig:cavityFig}
 \end{figure}
 
 In section 2, we bring equtions governing the fluid flow in the appropriate form, the section that follows provides insights to boundary and initial conditions that are exisitng for this problem, and which can be used in solving the problem numerically. In section 4 and 5 we non-dimensionalise the governing equations and carry out their discretization in the later. Section 6, is the most important part of this paper which gives insight of the algorithm(s) used in this work. In the final section we present the conclusions. All the algorithms implemented in this work can be found in the appendix.
 
 \section{Governing Equations}
+\label{govEqn}
 The equation of continuity for 2-D incompressible isothermal flow  \citep{Pedlosky, anderson1995computational} is given by the equation
 \begin{equation}
 \label{eqn:continuityEqn}
@@ -116,49 +117,49 @@ For the sake of convienance we will drop the subscript from the $\omega_z$ herea
 
 \section{Initial Conditions and Boundary Conditions}
 
-At time $t=0$ everything is at rest and hence all the values are zero. At the moment $t \geq0$ the lid will be moving at speed $u=U$, which will try to set the fluid in motion. We have the following boundary conditions for $t\geq0$ :
+At time $t=0$ everything is at rest and hence all the velocities, both of the fluid and the plate are zero. At the moment $t \geq0$ the lid will be moving at speed $u=U$, which will try to set the fluid in motion. We have the following boundary conditions for $t\geq0$ :
 \\*
-No slip condition will result in zero velocity along the wall tangent
+No slip condition will result in zero velocity along the wall tangent yields
 \begin{subequations}
 \begin{equation}
-u(x,0)=0
+u(x,0)=0  \dots \text{ Bottom wall}
 \end{equation}
 \begin{equation}
-v(D,y)=0
+v(D,y)=0 \dots \text{ Right wall}
 \end{equation}
 \begin{equation}
-u(x,H)=U
+u(x,H)=U \dots \text{ Top wall}
 \end{equation}
 \begin{equation}
-u(0,y)=0
+u(0,y)=0 \dots \text{ Left wall}
 \end{equation}
 \end{subequations}
 \\*
-The no penetration condition that the walls of the cavity are impervious results into
+While the no penetration condition that the walls of the cavity are impervious and impenetrable results into
 \begin{subequations}
-\begin{equation}
-v(x,0)=0
+\begin{equation} 
+v(x,0)=0 \dots \text{ Bottom wall}
 \end{equation}
 \begin{equation}
-u(D,y)=0
+u(D,y)=0 \dots \text{ Right wall}
 \end{equation}
 \begin{equation}
-v(x,H)=0
+v(x,H)=0 \dots \text{ Top wall}
 \end{equation}
 \begin{equation}
-u(0,y)=0
+u(0,y)=0 \dots \text{ Left wall}
 \end{equation}
 \end{subequations}
 
 
 \section{Non-dimensionalization of the Governing Equations}
 % comment on normalization	
-It is convenient numerically to make the equations for y and w dimensionless. This means we need to introduce the appropriate scalings for the dimensionless variables.
+In this section, we nondimensionalize the flow governing equations obtained in section \ref{govEqn}. This eases the analysis of the problem which, and reduces the number of free parameters, furthermore it helps to gain a greater insight into the relative size of various terms present in the equation. For carrying out non-dimensionalization we need appropriate scalings for the dimensionless variables, the scales are chosen for different quantites as shown below-
 \begin{equation}
-\hat{x}=\frac{x}{D}, \hat{y}=\frac{y}{H},  \hat{t}=\frac{U}{D}t,  \hat{u}=\frac{u}{U},  \hat{v}=\frac{v}{V_{ref}}
+\hat{x}=\frac{x}{D}, \hat{y}=\frac{y}{H},  \hat{t}=\frac{U}{D}t,  \hat{u}=\frac{u}{U},  \hat{v}=\frac{v}{V_{ref}}, \hat{\psi}=\frac{\psi}{UD}, \hat{\omega}=\frac{\omega D}{U}
 \end{equation}
 \\*
-Non-dimensionalising Equation \ref{eqn:continuityEqn} results into 
+We can obtain the scaling factor for the velocity in $y$ direction $v$ by carrying out non-dimensionalization of equation \ref{eqn:continuityEqn} which results into 
 \begin{subequations}
 \begin{equation}
 \frac{U}{D}\frac{\partial \hat{u}}{\partial \hat{x}} + \frac{V_{ref}}{H}\frac{\partial \hat{v}}{\partial \hat{y}} = 0  
@@ -170,11 +171,6 @@ Non-dimensionalising Equation \ref{eqn:continuityEqn} results into
 V_{ref}= \left(\frac{H}{D}\right)U = RU  
 \end{equation}
 \end{subequations}
-
-\begin{equation}
-\hat{\psi}=\frac{\psi}{UD},  \hat{\omega}=\frac{\omega D}{U}
-\end{equation}
-\\*
 Non-dimensionalising the stream function equation (\ref{eqn:streamFnEqn})
 \begin{subequations}
 \begin{equation}
@@ -185,21 +181,23 @@ Non-dimensionalising the stream function equation (\ref{eqn:streamFnEqn})
 \hat{\omega} = -\left[\frac{\partial^2 \hat{\psi}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\psi}}{\partial \hat{y}^2}\right]
 \end{equation}
 \end{subequations}
-\\*
 Non-dimensionalising the vorticity function equation (\ref{eqn:vorticityFnEqn})
 \begin{subequations}
 \begin{equation}
 \frac{\partial \left(\frac{U}{D}\hat{\omega_z}\right)}{\partial \left(\frac{D}{U}\hat{t}\right)} + \hat{u}U\frac{\partial \left(\frac{U}{D}\hat{\omega_z}\right)}{\partial (\hat{x}D)} + \frac{UH}{D}\hat{v}\frac{\partial \left(\frac{U}{D}\hat{\omega_z}\right)}{\partial (\hat{y}H)}= \nu \left [ \frac{\partial^2 \left(\frac{U}{D}\hat{\omega_z}\right)}{\partial (\hat{x}D)^2} +  \frac{\partial^2 \left(\frac{U}{D}\hat{\omega_z}\right)}{\partial (\hat{y}H)^2} \right ]
 \end{equation}
 \begin{equation}
-\label{eqn:vorticityEqn2}
 \frac{\partial \hat{\omega_z}}{\partial \hat{t}} + \hat{u}\frac{\partial \hat{\omega_z}}{\partial \hat{x}} + \hat{v}\frac{\partial \hat{\omega_z}}{\partial \hat{y}}= \frac{\nu}{UD} \left [ \frac{\partial^2 \hat{\omega_z}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\omega_z}}{\partial \hat{y}^2} \right ]
 \end{equation}
+\begin{equation}
+\label{eqn:vorticityEqn2}
+\frac{\partial \hat{\omega_z}}{\partial \hat{t}} + \hat{u}\frac{\partial \hat{\omega_z}}{\partial \hat{x}} + \hat{v}\frac{\partial \hat{\omega_z}}{\partial \hat{y}}= \frac{1}{Re} \left [ \frac{\partial^2 \hat{\omega_z}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\omega_z}}{\partial \hat{y}^2} \right ]
+\end{equation}
 \end{subequations}
-Also we have 
+Where, $Re = \frac{UD}{\nu}$, also we have 
 \begin{equation}
 \label{eqn:vorticityEqn3}
-u=\frac{\partial \psi}{\partial y} , v=-\frac{\partial \psi}{\partial x}
+u=\frac{\partial \psi}{\partial y} , v=-\frac{\partial \psi}{\partial x} \notag
 \end{equation}
 \\*
 Non-dimensionalisation of the above equation results into
@@ -207,38 +205,35 @@ Non-dimensionalisation of the above equation results into
 \label{eqn:streamFnEqn2}
 \hat{u}=\frac{1}{r}\frac{\partial \hat{\psi}}{\partial \hat{y}} , \hat{v}=-\frac{1}{r}\frac{\partial \hat{\psi}}{\partial \hat{x}}
 \end{equation}
-Substituting equation (\ref{eqn:vorticityEqn3}) in equation (\ref{eqn:vorticityEqn2}) yields 
+Substituting equation (\ref{eqn:streamFnEqn2}) in equation (\ref{eqn:vorticityEqn2}) yields 
 \begin{equation}
 \label{eqn:vorticityEqn4}
 \frac{\partial \hat{\omega_z}}{\partial \hat{t}} +\frac{1}{r}\left[\frac{\partial \hat{\psi}}{\partial \hat{y}}\frac{\partial \hat{\omega_z}}{\partial \hat{x}} - \frac{\partial \hat{\psi}}{\partial \hat{x}}\frac{\partial \hat{\omega_z}}{\partial \hat{y}}\right]= \frac{1}{Re} \left [ \frac{\partial^2 \hat{\omega_z}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\omega_z}}{\partial \hat{y}^2} \right ]
 \end{equation}
-where, $Re = \frac{UD}{\nu}$
-\\*
-Deriving the boundary conditions in the form of vorticity
+Deriving the boundary conditions in the form of vorticity and stream function
 \begin{subequations}
 \begin{equation}
-\hat{\omega}(\hat{x},0) = - \frac{1}{r^2}\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{y}^2}\right)_{\hat{y}=0}
+\hat{\omega}(\hat{x},0) = - \frac{1}{r^2}\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{y}^2}\right)_{\hat{y}=0} \dots \text{Bottom wall}
 \end{equation}
 \begin{equation}
-\hat{\omega}(\hat{x},1) = - \frac{1}{r^2}\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{y}^2}\right)_{\hat{y}=1}
+\hat{\omega}(\hat{x},1) = - \frac{1}{r^2}\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{y}^2}\right)_{\hat{y}=1} \dots \text{Top wall}
 \end{equation}
 \begin{equation}
-\hat{\omega}(0,\hat{y}) = -\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{x}^2}\right)_{\hat{x}=0}
+\hat{\omega}(0,\hat{y}) = -\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{x}^2}\right)_{\hat{x}=0} \dots \text{Left wall}
 \end{equation}
 \begin{equation}
-\hat{\omega}(1,\hat{y}) = -\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{x}^2}\right)_{\hat{x}=1}
+\hat{\omega}(1,\hat{y}) = -\left(\frac{\partial^2 \hat{\psi}}{\partial \hat{x}^2}\right)_{\hat{x}=1} \dots \text{Right wall}
 \end{equation}
 \end{subequations}
-
-Deriving the boundary conditions in the form of vorticity. For the bottom surface $\hat{u}=\hat{v}=0$, substituiting this equation (\ref{eqn:streamFnEqn2}) yields 
+For the bottom surface $\hat{u}=\hat{v}=0$, substituiting this equation (\ref{eqn:streamFnEqn2}) yields 
 \begin{equation}
 \hat{\psi}_{(\hat{y}=0)} = c_1
 \end{equation}
-Where $c_1$ is the integration constant. Similarly we can obtain the equations for the other walls as
+Where $c_1$ is the constant of integration. Similarly we can obtain the equations for the other walls as
 \begin{equation}
 \hat{\psi}_{(\hat{x}=0)} = c_2, \hat{\psi}_{(\hat{x}=1)} = c_3 
 \end{equation}
-For the top wall
+For the top wall we have 
 \begin{equation}
 \hat{u} = U =  \frac{1}{r}\frac{\partial \hat{\psi}}{\partial \hat{y}}  \Rightarrow \hat{\psi} = rUH+c_4  =c_5
 \end{equation}
@@ -249,11 +244,11 @@ For the top wall
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=.4]{cavityFig2.png}
-\caption{scaling of the WF law by $A\left(r,\mu^*\right)$}
+\caption{Continuity of the integration contants at the vertices}
 \label{fig:cavityFig2}
 \end{figure}
 
-We have $c_1=c_2=c_3=c_5=c$ because of the continuity at the corners as shown in the Figure \ref{fig:cavityFig2}. Without any loss of generality we can set $c=0$ as $\psi$ is a relative term.
+We can choose the constants to be equal to each other i.e.  $c_1=c_2=c_3=c_5=c$ because of the continuity at the corners as shown in the Figure \ref{fig:cavityFig2}. Without any loss of generality we can set $c=0$ as $\psi$ is a relative term.
 Hence
 \begin{equation}
 \hat{\psi}_{(y=0)}=\hat{\psi}_{(y=1)}=\hat{\psi}_{(x=0)}=\hat{\psi}_{(x=1)}=0
@@ -264,62 +259,97 @@ Hence
 
 \section{ Discretization Schemes}
 % comment why do we use such a grid with a stretching function --> velocity gradient is hight near walls. Why only that particular stretching function
+In this section we focus on discretisation of the domain in smaller regions. This is inherently a two step process, first we meshing i.e. divide the domain into smaller regions. These smaller regions may be triangles and rectangles (in 2D) and tetrahedrons, hexahedrons (in 3D) and other types of geometric entities, but in our case we stick to the rectangular grids. The vertices of these geometric entities are called nodes. Secondly, we discretize the governing equations over the predefined mesh. In the analysis that follows we will drop the 'hat' notation for dimensionless variables for convienance. We present this process in to different subsections one each for steady (uniform grid) and unsteady state (non-uniform grid).
 
+\subsection{Discretization for Non-uniform grid}
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=.5]{Figure_1.png}
-\caption{A 128 $\times$ 128 grid generated by the program}
+\caption{A 128 $\times$ 128 Non-uniform grid generated by the program}
 \label{fig:gridImage}
 \end{figure}
-In the analysis that follows we will drop the 'hat' notation for dimensionless variables for convienance. We will first use the usual FTCS scheme and a grid that is not equally spaced as shown in Figure \ref{fig:gridImage}. Derive the orders of accuracies of this scheme for both time and space. The values of $\Delta x$ and $\Delta y$ are not constant. You must use an appropriate stretching function so that the number of grid points vary in such a way that more grid points are concentrated closer to walls and the lid. Why is this necessary? Comment on this! Do a Von-Neumann stability analysis to find out the CFL criterion and the maximum time step to be used in your calculations. You may notice that $\Delta x,\Delta y,u,v$ are going to vary throughout the domain. So, the grid Courant number is also going to vary for every node, and every time step. So your code/program/algorithm must be adaptive; i.e, it must be able to choose the correct values of $\Delta t$ so that the CFL criterion is satisfied at all times and at all locations in the domain.
-\\*
-Discretiztion of equation \ref{eqn:streamFnEqn3} using forward time and central differencing scheme. Second order accurate in space.
+
+We have used the Forward Time Central Space (FTCS) scheme for the non-uniform grid. The main reason for using the non-uniform grid is enable our analysis to capture accurately the dynamics near the walls where the velocity gradients are very high. The grid size is relatively bigger near the center in order to save some computaion time, also close to the center ther wont be any drastic changes. The non-uniform grid that is not equally spaced as shown in Figure \ref{fig:gridImage}. The grid has been obtained by using $tanh$ function, the grid stretching can be changed as required by supplying the stretching parameter $\gamma$ to the grid stretching function (see Appendix for implementaion). Function used for grid generation -  
+\begin{equation}
+y_j = 1- \frac{tanh\left[\gamma\left(1-\frac{2j}{N}\right)\right]}{tanh(\gamma)} \text{   }  j =1,2,3 \dots N
+\end{equation}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=.4]{nugrid.png}
+\caption{Non-unform spacing along the $x-$axis (Credit- Craft)}
+\label{fig:nugrid}
+\end{figure}
+Now we derive the FTCS scheme for non-uniform grid. We use Taylor series expansions to develop and/or analyse the accuracy of numerical approximations for derivatives. Using Taylor series expansions for the grid point as shown in Figure \ref{fig:nugrid} we can write
+\begin{subequations}
+\begin{equation}
+f(x_{i+1}) = f(x_i) + \Delta x_i f^{'}(x_i)+\frac{(\Delta x_i)^2}{2!}f^{''}(x_i)  + \frac{(\Delta x_i)^3}{3!}f^{'''}(x_i)  \dots
+\end{equation}
+\begin{equation}
+f(x_{i-1}) = f(x_i) -\Delta x_{i-1} f^{'}(x_i)+\frac{(\Delta x_{i-1})^2}{2!}f^{''}(x_i)  - \frac{(\Delta x_{i-1})^3}{3!}f^{'''}(x_i)  \dots
+\end{equation}
+\end{subequations}
+Using the above to equation we can discretized derivatives to be
+\begin{subequations}
+\begin{equation}
+f^{'}(x_i) = \frac{f(x_{i+1})-f(x_{i-1})}{\Delta x_i + \Delta x_{i-1}} + \mathcal{O}(\Delta x)
+\end{equation}
+\begin{equation}
+f^{''}(x_i) = \frac{\Delta x_{i-1} f(x_{i+1}) + \Delta x_{i}f(x_{i-1}) - (\Delta x_i + \Delta x_{i-1}f(x_i))}{\Delta x_{i-1}\Delta x_i +\Delta x_{i} \Delta x_{i-1}} + \mathcal{O}(\Delta x)
+\end{equation}
+\end{subequations}
+Although, the equations appear to be only first order accurate for the non-uniform grid, they approach second order accuracy when the grid size are very close to each other i.e. the case of uniform grid. We can write the discretised form for the equation ~\ref{eqn:streamFnEqn3} and  ~\ref{eqn:vorticityEqn2} as 
+\begin{subequations}
+\begin{equation}
+\begin{split}
+\label{eqn:main1}
+-\omega_{ij} =2\left[\frac{\Delta x_{i-1} \psi(x_{i+1}) + \Delta x_{i}\psi(x_{i-1}) - (\Delta x_i + \Delta x_{i-1}\psi(x_i))}{\Delta x_{i-1}\Delta x_i +\Delta x_{i} \Delta x_{i-1}} \right]\\+\frac{2}{r^2} \left[\frac{\Delta y_{i-1} \psi(y_{i+1}) + \Delta y_{i}\psi(y_{i-1}) - (\Delta y_i + \Delta y_{i-1}\psi(y_i))}{\Delta y_{i-1}\Delta y_i +\Delta y_{i} \Delta y_{i-1}}\right]
+\end{split}
+\end{equation}
+% von newmann stability is only valid for linear equation, so check if the above equation is linear
+% we will be using adaptive time marching scheme for this
+\begin{equation}
+\begin{split}
+\label{eqn:main2}
+\frac{\omega^{n+1}-\omega^n}{\Delta t_i} + \left[u_{ij}\left(\frac{\omega(x_{i+1})-\omega(x_{i-1})}{\Delta x_i + \Delta x_{i-1}} \right) + v_{i,j}\left(\frac{\omega(y_{i+1})-\omega(y_{i-1})}{\Delta y_i + \Delta y_{i-1}} \right)\right] =  \frac{1}{Re}A
+\end{split}
+\end{equation}
+\end{subequations}
+Where A, is defined as  
+\begin{equation}
+\begin{split}
+A = 2\left[\frac{\Delta x_{i-1} \omega(x_{i+1}) + \Delta x_{i}\omega(x_{i-1}) - (\Delta x_i + \Delta x_{i-1}\omega(x_i))}{\Delta x_{i-1}\Delta x_i +\Delta x_{i} \Delta x_{i-1}} \right] \\+\frac{2}{r^2} \left[\frac{\Delta y_{i-1} \omega(y_{i+1}) + \Delta y_{i}\omega(y_{i-1}) - (\Delta y_i + \Delta y_{i-1}\omega(y_i))}{\Delta y_{i-1}\Delta y_i +\Delta y_{i} \Delta y_{i-1}}\right] \notag
+\end{split}
+\end{equation}
+
+
+
+\subsection{Discretization for Uniform grid}
+
+In this section we discretize equation for uniform grid to be used in the steady state analysis. We discretize equation \ref{eqn:streamFnEqn3} using forward time and central differencing scheme, the resulting equation in second order accurate in space.
 \begin{equation}
 \frac{\psi_{i+1,j}-2\psi_{i,j}+\psi_{i-1,j} }{(\Delta x)^2} + \frac{1}{r^2}\frac{\psi_{i,j+1}-2\psi_{i,j}+\psi_{i,j-1}}{(\Delta y)^2} = -\omega_{zij}
 \end{equation}
-Von-Newmann stability analysis for the above equation -
-\\*
-Discretiztion of equation \ref{eqn:vorticityEqn4}  using forward time and central differencing scheme. First order time accurate and second order space accurate. 
+For discretization of equation \ref{eqn:vorticityEqn2} we drop the temporal derivative terms and discretize using forward time and central differencing scheme, which is also second order space accurate. 
 \begin{equation} 
 \begin{split}
-\frac{\omega_{i,j}^{n+1}-\omega_{i,j}^{n}}{\Delta t}+\frac{1}{r}\left[\left(\frac{\psi_{i,j+1}-\psi_{i,j-1}}{2\Delta y}\right)\left(\frac{\omega_{i+1,j}-\omega_{i-1,j}}{2\Delta x}\right) - \left(\frac{\psi_{i+1,j}-\psi_{i-1,j}}{2\Delta x}\right)\left(\frac{\omega_{i,j+1}-\omega_{i,j-1}}{2\Delta y}\right)  \right] \\
+\left[u_{ij}\left(\frac{\omega_{i+1,j}-\omega_{i-1,j}}{2\Delta x}\right) - v_{ij}\left(\frac{\omega_{i,j+1}-\omega_{i,j-1}}{2\Delta y}\right)  \right]
   = \frac{1}{Re}\left[\left(\frac{\omega_{i+1,j}-2\omega_{i,j}+\omega_{i-1,j}}{(\Delta x)^2}\right)+\frac{1}{r^2}\left(\frac{\omega_{i,j+1}-2\omega_{i,j}+\omega_{i,j-1}}{(\Delta y)^2}\right) \right]
 \end{split}
 \end{equation}
-Von-Neutmann stability analysis for the above equation -
-% von newmann stability is only valid for linear equation, so check if the above equation is linear
-% we will be using adaptive time marching scheme for this
-
-\section{Algorithm}
-\begin{table}[ht]
-   \centering
-   \sffamily
-   \begin{tabular}{rlr}
-     \rowcolor{black!75}
-      \head{No.}& \head{Steps}  \\
-     1 & Initialize $u$ and $v$ values        \\
-     2 & Define the vorticity equation    \\
-     3 & Solve Poisson equation for stream function    \\
-     4 & Solve vorticity transport equation at a forward time step $t+\Delta t$ \\
-     5 & Solve the Poisson equation for stream function at  $t+\Delta t$   \\
-     6 & Find $u$ and $v$ using the vorticity function equation      \\
-     7 & Check if the CFL criteria is satisified, if yes proced to next step     \\
-     8 & Else change the time step size and repeat the loop     \\
-  \end{tabular}
-\end{table}
 
 
-The Fermi-Dirac integrals play very improtant role in the study of semiconductors appear frequently in semiconductor problems. It is thus a topic of special interest among physicist working in this field.
+\section{Courant–Friedrichs–Lewy (CFL) analysis}
+This section deals with the stabilty analysis, it is a necessary condition for convergence while solving PDEs numerically. It plays an important role explicit time integration schemes as a consequence, the time step must be less than a certain critical time step, otherwise the simulation blow away. The condition is named after Richard Courant, Kurt Friedrichs, and Hans Lewy who described it in their 1928 paper \citep{cfl}.
+In our case the values of $\Delta x$, $\Delta y$, $u$ and $v$ are varying throughout the domain. Hence for finding the solution at $t+\Delta t$ we need to compute $\Delta t$ such that our computations are stable at each and every node, thus we need to find the grid Courant number is also going to vary for every node, and every time step. 
 
-\section{Courant–Friedrichs–Lewy analysis}
-In mathematics, the Courant–Friedrichs–Lewy (CFL) condition is a necessary condition for convergence while solving certain partial differential equations (usually hyperbolic PDEs) numerically. It arises in the numerical analysis of explicit time integration schemes, when these are used for the numerical solution. As a consequence, the time step must be less than a certain time in many explicit time-marching computer simulations, otherwise the simulation produces incorrect results. The condition is named after Richard Courant, Kurt Friedrichs, and Hans Lewy who described it in their 1928 paper \citep{cfl}.
 We have the non dimentionalized strealine vorticity formulation equation as
 
 \begin{equation}
 \frac{\partial \hat{\omega}}{\partial \hat{t}} + \hat{u}\frac{\partial \hat{\omega}}{\partial \hat{x}} +\hat{ v}\frac{\partial \hat{\omega}}{\partial \hat{y}}= \frac{1}{Re} \left [ \frac{\partial^2 \hat{\omega}}{\partial \hat{x}^2} +  \frac{1}{r^2}\frac{\partial^2 \hat{\omega}}{\partial \hat{y}^2} \right ]
 \end{equation}
 
-In the analysis that follows we have dropped the hat symbol i.e. $\hat{}$ for non-dimensionalised quantities. We shall now use the Fourier wave form to bring out the required conditions. The amplification is easily identified using the Fourier wave form, moreover the waveform remains preserved. 
+In the analysis that follows we have dropped the hat symbol i.e. $\hat{}$ for non-dimensionalised quantities. We shall now use the Fourier wave form to bring out the required conditions. The amplification is easily identified using the Fourier wave form, moreover the waveform remains preserved. Also only one term is sufficient because of the linearity of the equation (Although this equation is not linear the analysis can provide apporximate guesses).
 \begin{equation}
 \omega = \sum_m A^n (t) e^{\hat{i}(k_m x+k_n y)}
 \end{equation}
@@ -398,7 +428,7 @@ As $q = 1$ is a root of $p(q)$, we can have four types of possible parabolas as 
 \alpha > 2 \beta^2
 \end{equation}
 Moreover, we also have the condition that $p(-1) \leq 0$ which results in $\alpha \leq 2$. Hence we have $2\beta^2<\alpha \leq 2$.
-Finally, we obtain 
+Finally, we obtain two conditions for the time step, we shall us the minimum of the two.
 
 \begin{equation}
 \Delta t \leq \frac{Re}{2}\left[\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2r^2}\right]^{-1}
@@ -409,33 +439,75 @@ Finally, we obtain
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=.5]{par1.png}
+\includegraphics[scale=.3]{par1.png}
 \caption{Possible parabolas passing through $q=1$}
 \label{fig:para1}
 \end{figure}
 
+\section{Algorithm}
+In this section we provide the algorithms which have been used for solving this problem. Table 1 lists the algorithm flow for unsteady state analysis while table 2 provides the algorithm for steady state analysis.
+\begin{table}[ht]
+   \centering
+   \sffamily
+   \begin{tabular}{rlr}
+     \rowcolor{black!75}
+      \head{No.}& \head{Steps}  \\
+     1 & Initialize $u$, $v$, $\psi$ and $\omega$ matrices        \\
+     2 & Apply boundary conditions for $u$, $v$, $\psi$ and $\omega$ \\
+     2 & Define the vorticity equation    \\
+     3 & Solve Poisson equation for stream function    \\
+     4 & Solve vorticity transport equation at a forward time step $t+\Delta t$ \\
+     5 & Solve the Poisson equation for stream function at  $t+\Delta t$ by iterative method  \\
+     6 & Find $u$ and $v$ using the vorticity function equation      \\
+     7 & Check if the CFL criteria is satisified, if yes proced to next step     \\
+     8 & Else change the time step size and repeat the loop     \\
+  \end{tabular}
+  \caption{Algorithm for Unsteady state analysis}
+\end{table}
+
+\begin{table}[ht]
+   \centering
+   \sffamily
+   \begin{tabular}{rlr}
+     \rowcolor{black!75}
+      \head{No.}& \head{Steps}  \\
+     1 & Initialize $u$, $v$, $\psi$ and $\omega$ matrices        \\
+     2 & Apply boundary conditions for $u$, $v$, $\psi$ and $\omega$ \\
+     2 & Define the vorticity equation    \\
+     3 & Solve Poisson equation for stream function    \\
+     4 & Solve vorticity transport equation at a forward time step $t+\Delta t$ \\
+     5 & Solve the Poisson equation for stream function at  $t+\Delta t$ by iterative method  \\
+     6 & Find $u$ and $v$ using the vorticity function equation      \\
+     7 & Check if the CFL criteria is satisified, if yes proced to next step     \\
+     8 & Else change the time step size and repeat the loop     \\
+  \end{tabular}
+  \caption{Algorithm for Steady state analysis}
+\end{table}
+
+
 
 \section{Results}
 % what is the Re at which turbulance starts and fluid shows transition i.e. vorticities
-The Fermi-Dirac integrals play very improtant role in the study of semiconductors appear frequently in semiconductor problems. It is thus a topic of special interest among physicist working in this field.
 
 \subsection{Grid Independence Studies}
-The formulation for obtaining the minimum lattice thermal conductivity is given by approach developed by Cahill \citep{PhysRevB.46.6131}. To minimise the Phonon thermal conductivity, the integrand has been extremised and simplified yielding solution in the form of offset log function. The plot for the integrand essentially Planck's blackbody radiation function has also been shown in Figure 2.
 
 \subsection{Streamlines for Varying R and Re}
-The efficiency of the thermoelectric material is directly proportional to the electrical conductivity of the material. Maximizing the same is of the utmost importance inorder to increase its efficiency. We have the following expression for the electrical . \citep{articleSRV}
-
 
 \subsection{Profiles for Steady Flow}
 
-Exact Fermi Dirac Integral expressions can be very helpful in generalizing the Wiedemann Franz  Law. 
-
 \section{Discussion}
-
 Exact Fermi Dirac Integral expressions can be very helpful in generalizing the Wiedemann Franz  Law. Exact analytic expressions of the same will greatly assist and equip the researchers in the new material design processes.  Electronic thermal conductivity, $\kappa_e$ and minimum lattice thermal conductivity $\kappa_{l,min}$  have exact analytic expressions and we have obtained very interesting forms of solutions while maximising the two. More recent observations on the influence of anharmonicity on  $\kappa_{l,min}$  suggest that the Polylogarithms and Lambert W can have more interesting applications.
 
-\section*{Appendix}
-The below code can be used for plotting the scaling factor A as shown in Figure 1.
+\section*{Appendix A}
+Algorithm implimentation for unsteady state.
+\lstinputlisting{71.py}
+
+\section*{Appendix B}
+Algorithm implimentation for steady state.
+\lstinputlisting{73n.py}
+
+\section*{Appendix C}
+Algorithm implimentation for grid generation.
 \lstinputlisting{gridGen.py}
 
 \bibliographystyle{plain}
