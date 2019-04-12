@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage{authblk}
+\usepackage{subcaption} 
 \usepackage{natbib}
 \usepackage{hyperref}
 \usepackage{graphicx}
@@ -88,7 +89,7 @@ The vorticity equation of fluid dynamics describes evolution of the vorticity $\
 \vec{\omega}^{\,} = -\left[\frac{\partial^2 \psi}{\partial x^2} +  \frac{\partial^2 \psi}{\partial y^2}\right]=-\nabla^2 \psi
 \end{equation}
 \end{subequations}
-Equation  ~\ref{eqn:streamFnEqn} can be obtained by combining equations ~\ref{eqn:p1}, ~\ref{eqn:p2} and \ref{eqn:w2}.
+Equation  ~\ref{eqn:streamFnEqn} is a elliptic equation and can be obtained by combining equations ~\ref{eqn:p1}, ~\ref{eqn:p2} and \ref{eqn:w2}.
 
 Navier-Stokes equations which follows are perhaps the most important equations in the field of Fluid Dynamics. These equations are essentially the momentum conservation equations for isothermal, Newtonian and incopressible fluid. This can also be seen as application of Isaac Newton's second law to fluid motion.
 \begin{subequations}
@@ -103,14 +104,12 @@ Navier-Stokes equations which follows are perhaps the most important equations i
 \end{equation}
 \end{subequations}
 
-Equations ~\ref{eqn:ns1} and ~\ref{eqn:ns2} are for the fluid flow along the $x$ and $y$ direction respectively.  One may observe that these equations also comprises of the pressure term $P$, which may not be required in some of the cases. We can eliminate the pressure term $P$ in order to reduce the number of variable and simplify the anylysis by computing $\frac{\partial (~\ref{eqn:ns1})}{\partial y} - \frac{\partial (~\ref{eqn:ns2})}{\partial x} $ , thus resulting in the below equation know as vorticity relation. This technique of approaching the problem is known as derived variable apporach. 
+Equations ~\ref{eqn:ns1} and ~\ref{eqn:ns2} are for the fluid flow along the $x$ and $y$ direction respectively.  One may observe that these equations also comprises of the pressure term $P$, which may not be required in some of the cases. We can eliminate the pressure term $P$ in order to reduce the number of variable and simplify the anylysis by computing $\frac{\partial (~\ref{eqn:ns1})}{\partial y} - \frac{\partial (~\ref{eqn:ns2})}{\partial x} $ , thus resulting in the below equation know as vorticity relation. This technique of approaching the problem is known as derived variable approach. 
 \begin{equation}
 \label{eqn:vorticityFnEqn}
 \frac{\partial \omega_z}{\partial t} + u\frac{\partial \omega_z}{\partial x} + v\frac{\partial \omega_z}{\partial y}= \nu \left [ \frac{\partial^2 \omega_z}{\partial x^2} +  \frac{\partial^2 \omega_z}{\partial y^2} \right ]
 \end{equation}
-% \notag
-
-For the sake of convienance we will drop the subscript from the $\omega_z$ hereafter.
+The equation thus obtained is parabolic in nature. For the sake of convienance we will drop the subscript from the $\omega_z$ hereafter.
 
 
 
@@ -482,7 +481,7 @@ Finally, we obtain two conditions for the time step, we shall us the minimum of 
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=.3]{par1.png}
+\includegraphics[scale=.6]{par1.png}
 \caption{Possible parabolas passing through $q=1$}
 \label{fig:para1}
 \end{figure}
@@ -496,14 +495,12 @@ In this section we provide the algorithms which have been used for solving this 
      \rowcolor{black!75}
       \head{No.}& \head{Steps}  \\
      1 & Initialize $u$, $v$, $\psi$ and $\omega$ matrices        \\
-     2 & Apply boundary conditions for $u$, $v$, $\psi$ and $\omega$ \\
-     2 & Define the vorticity equation    \\
-     3 & Solve Poisson equation for stream function    \\
-     4 & Solve vorticity transport equation at a forward time step $t+\Delta t$ \\
-     5 & Solve the Poisson equation for stream function at  $t+\Delta t$ by iterative method  \\
-     6 & Find $u$ and $v$ using the vorticity function equation      \\
-     7 & Check if the CFL criteria is satisified, if yes proced to next step     \\
-     8 & Else change the time step size and repeat the loop     \\
+     2 & Apply boundary conditions (Section 3,4) for $u$, $v$, $\psi$ and $\omega$ \\
+     3 & Use CFL criteria at every node and find the stable $\Delta t$ for next time step\\
+     4 & Solve vorticity transport equation at a forward time step $t+\Delta t$ and find $\omega^{n+1}$ \\
+     5 & Solve the Poisson equation for stream function ($\psi^{n+1}$) at  $t+\Delta t$ by iterative method  \\
+     6 & Find $u$ and $v$ using the iterated streamfunciton ($\psi^{n+1}$)       \\
+     7 & Repeat the loop till the specified time or steady state is reached   \\
   \end{tabular}
   \caption{Algorithm for Unsteady state analysis}
 \end{table}
@@ -516,42 +513,142 @@ In this section we provide the algorithms which have been used for solving this 
       \head{No.}& \head{Steps}  \\
      1 & Initialize $u$, $v$, $\psi$ and $\omega$ matrices        \\
      2 & Apply boundary conditions for $u$, $v$, $\psi$ and $\omega$ \\
-     2 & Define the vorticity equation    \\
-     3 & Solve Poisson equation for stream function    \\
-     4 & Solve vorticity transport equation at a forward time step $t+\Delta t$ \\
-     5 & Solve the Poisson equation for stream function at  $t+\Delta t$ by iterative method  \\
+     3 & Start the iteration loop \\
+     4 & Solve vorticity transport equation at a 1st iterative step \\
+     5 & Solve Poisson equation for stream function at  1st iterative step  \\
      6 & Find $u$ and $v$ using the vorticity function equation      \\
-     7 & Check if the CFL criteria is satisified, if yes proced to next step     \\
-     8 & Else change the time step size and repeat the loop     \\
+     7 & Repeat the loop until the values converge     \\
   \end{tabular}
   \caption{Algorithm for Steady state analysis}
 \end{table}
 
 
-
 \section{Results}
-% what is the Re at which turbulance starts and fluid shows transition i.e. vorticities
+In this final section we present the results, for both steady and unsteady analysis. These include plots for streamfunction $\psi$ and normalized velocities vs normalised length scale, the plots have been presented in the following subsections. The stream function plots for unsteady flow has been given in ~\ref{fig:res}
+
+\begin{figure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{r1.png}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{r2.png}
+  \end{subfigure}
+      \caption{Time evolution of Streamlines, unsteady state for $64\times64$ non-uniform grid, $Re=10$}
+\label{fig:res}
+\end{figure}
 
 \subsection{Grid Independence Studies}
+The plot for u/U vs y/H at x = D/2, t=0.25 and Re = 10 follows similar profile as compared to the data obtained by Ghia et al has been given in ~\ref{fig:res2}. Physically it is not possible to get velocities greater than one, but in our case we were getting it slightly higher than one, hence the given plot has been normalised for comparision.
+
+\begin{figure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{ghia.png}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{ghia2.png}
+  \end{subfigure}
+      \caption{Comparitive plots between obtained plot and standard plot by Ghia et al}
+\label{fig:res2}
+\end{figure}
 
 \subsection{Streamlines for Varying R and Re}
+The time vaying stream function is shown in figure ~\ref{fig:res3t} for Re = 50.
+\begin{figure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{t1.png}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{t2.png}
+  \end{subfigure}
+ \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{t3.png}
+  \end{subfigure}
+      \caption{Streamlines at Re = 50 at time, 1,5,10 sec respectively}
+\label{fig:res3t}
+\end{figure}
+
 
 \subsection{Profiles for Steady Flow}
+The profiles for steady state flow are provided in figures  ~\ref{fig:res3s}, ~\ref{fig:res4s} and ~\ref{fig:res5s}.
+
+\begin{figure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{11.png}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{12.png}
+  \end{subfigure}
+      \caption{Plot for Normalized u and Normalized y}
+\label{fig:res3s}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{21.png}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{22.png}
+  \end{subfigure}
+      \caption{Plot for Normalized v and Normalized x}
+\label{fig:res4s}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{31.png}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{32.png}
+  \end{subfigure}
+ \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{33.png}
+  \end{subfigure}
+      \caption{Comparision with standard results}
+\label{fig:res5s}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{41.png}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{42.png}
+  \end{subfigure}
+ \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{43.png}
+  \end{subfigure}
+      \caption{Comparision with standard results}
+\label{fig:res6s}
+\end{figure}
+
+
 
 \section{Discussion}
-Exact Fermi Dirac Integral expressions can be very helpful in generalizing the Wiedemann Franz  Law. Exact analytic expressions of the same will greatly assist and equip the researchers in the new material design processes.  Electronic thermal conductivity, $\kappa_e$ and minimum lattice thermal conductivity $\kappa_{l,min}$  have exact analytic expressions and we have obtained very interesting forms of solutions while maximising the two. More recent observations on the influence of anharmonicity on  $\kappa_{l,min}$  suggest that the Polylogarithms and Lambert W can have more interesting applications.
+Understanding of the dynamics of this problem plays a very crucial role before stepping into more involved problems. This problem formulation can be further extended to account for temperture and heat flows, this can find many applications in digital electronics where designing of proper system for heat removal is required. 
 
 \section*{Appendix A}
 Algorithm implimentation for unsteady state.
 \lstinputlisting{71.py}
 
 \section*{Appendix B}
-Algorithm implimentation for steady state.
+Algorithm implimentation for steady state (python).
 \lstinputlisting{73n.py}
 
 \section*{Appendix C}
 Algorithm implimentation for grid generation.
 \lstinputlisting{gridGen.py}
+
+\section*{Appendix D}
+Algorithm implimentation for steady state (MatLab).
+\lstinputlisting{temp.m}
+
 
 \bibliographystyle{plain}
 \bibliography{references}
