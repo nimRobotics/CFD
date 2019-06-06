@@ -32,6 +32,7 @@ for x in range(i):
 plt.scatter(itera, error, marker='o')
 plt.ylabel('Absolute error', fontsize=16)
 plt.xlabel('Iteration number', fontsize=16)
-plt.show()
+
 t = Table([itera, error], names=('Iteration number', 'Absolute error'))
 print(t)
+plt.show()
